@@ -6,4 +6,5 @@ export interface Navigation
     default: FuseNavigationItem[];
     futuristic: FuseNavigationItem[];
     horizontal: FuseNavigationItem[];
+    firstNav: FuseNavigationItem[];
 }

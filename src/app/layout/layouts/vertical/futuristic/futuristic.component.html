@@ -1,5 +1,23 @@
 <!-- Loading bar -->
 <fuse-loading-bar></fuse-loading-bar>
+<fuse-vertical-navigation
+    class="bg-card dark:bg-gray-900 z-999 print:hidden"
+    [appearance]="'thin'"
+    [mode]="'side'"
+    [name]="'firstNav'"
+    [navigation]="navigation.firstNav"
+    [opened]="!isScreenSmall">
+
+    <ng-container fuseVerticalNavigationContentHeader>
+        <!-- Logo -->
+        <div class="flex items-center justify-center h-20 mt-3 mb-4">
+            <img
+                class="w-10"
+                src="assets/images/logo/logo.svg"
+                alt="Logo image">
+        </div>
+    </ng-container>
+</fuse-vertical-navigation>
 
 <!-- Navigation -->
 <fuse-vertical-navigation
@@ -9,14 +27,7 @@
     [navigation]="navigation.futuristic"
     [opened]="!isScreenSmall">
     <!-- Navigation header hook -->
-    <ng-container fuseVerticalNavigationHeader>
-        <!-- Logo -->
-        <div class="flex items-center h-20 p-6 pb-0">
-            <img
-                class="w-30"
-                src="assets/images/logo/logo-text-on-dark.svg">
-        </div>
-    </ng-container>
+    <br><br>
     <!-- Navigation footer hook -->
     <ng-container fuseVerticalNavigationFooter>
         <!-- User -->
@@ -24,10 +35,11 @@
             <user></user>
             <div class="flex flex-col w-full ml-4 overflow-hidden">
                 <div class="w-full whitespace-nowrap text-ellipsis overflow-hidden leading-normal text-current opacity-80">
-                    {{user.name}}
+                    <!-- {{user.name}} -->
+                    Hung Pham Thanh
                 </div>
                 <div class="w-full mt-0.5 whitespace-nowrap text-sm text-ellipsis overflow-hidden leading-normal text-current opacity-50">
-                    brian.hughes&#64;company.com
+                    hung.phamthanh&#64;poi.vn
                 </div>
             </div>
         </div>

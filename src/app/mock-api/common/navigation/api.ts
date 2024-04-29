@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FuseNavigationItem } from '@fuse/components/navigation';
 import { FuseMockApiService } from '@fuse/lib/mock-api';
-import { compactNavigation, defaultNavigation, futuristicNavigation, horizontalNavigation } from 'app/mock-api/common/navigation/data';
+import { compactNavigation, defaultNavigation, firstNavigation, futuristicNavigation, horizontalNavigation } from 'app/mock-api/common/navigation/data';
 import { cloneDeep } from 'lodash-es';
 
 @Injectable({providedIn: 'root'})
@@ -11,6 +11,7 @@ export class NavigationMockApi
     private readonly _defaultNavigation: FuseNavigationItem[] = defaultNavigation;
     private readonly _futuristicNavigation: FuseNavigationItem[] = futuristicNavigation;
     private readonly _horizontalNavigation: FuseNavigationItem[] = horizontalNavigation;
+    private readonly _firstNavigation: FuseNavigationItem[] = firstNavigation;
 
     /**
      * Constructor
@@ -81,6 +82,7 @@ export class NavigationMockApi
                         default   : cloneDeep(this._defaultNavigation),
                         futuristic: cloneDeep(this._futuristicNavigation),
                         horizontal: cloneDeep(this._horizontalNavigation),
+                        firstNav: cloneDeep(this._firstNavigation),
                     },
                 ];
             });
