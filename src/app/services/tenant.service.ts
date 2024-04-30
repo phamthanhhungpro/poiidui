@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from 'environments/environment';
 import { Observable } from 'rxjs';
 import { Tenant } from 'app/model/tenant.model';
+import { objectToQueryString } from './queryStringHelper';
 const baseUrl = environment.apiUrl + 'Tenant';
 
 @Injectable({
@@ -12,8 +13,9 @@ const baseUrl = environment.apiUrl + 'Tenant';
 export class TenantService {
   constructor(private http: HttpClient) { }
 
-  getAll(): Observable<Tenant[]> {
-    return this.http.get<Tenant[]>(baseUrl);
+  getAll(query: any): Observable<Tenant[]> {
+    const queryString = objectToQueryString(query);
+    return this.http.get<Tenant[]>(`${baseUrl}?${queryString}`);
   }
 
   get(id: any): Observable<Tenant> {

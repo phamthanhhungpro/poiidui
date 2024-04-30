@@ -7,14 +7,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { RouterLink } from '@angular/router';
 import { FuseDrawerComponent } from '@fuse/components/drawer';
-import { Observable, map } from 'rxjs';
+import { BehaviorSubject, Observable, map } from 'rxjs';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { NewTenantComponent } from './new-tenant/new-tenant.component';
 import { EditTenantComponent } from './edit-tenant/edit-tenant.component';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { TenantService } from 'app/services/tenant.service';
-
+import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 @Component({
   selector: 'app-tenant',
   standalone: true,
@@ -43,17 +43,20 @@ import { TenantService } from 'app/services/tenant.service';
   imports: [MatIconModule, RouterLink, MatButtonModule, CdkScrollable, NgIf,
     AsyncPipe, NgForOf, CurrencyPipe, MatButtonModule, MatMenuModule,
     FuseDrawerComponent, MatDividerModule, MatSidenavModule, NewTenantComponent,
-    EditTenantComponent],
+    EditTenantComponent, MatPaginatorModule],
 })
 export class TenantComponent {
 
   @ViewChild('addDrawer', { static: false }) addDrawer: FuseDrawerComponent;
+  @ViewChild('paginator') paginator: MatPaginator;
 
-  public tenants$: Observable<any[]>;
-
+  tenants$;
   drawerComponent: 'new-tenant' | 'edit-tenant';
   configForm: UntypedFormGroup;
   selectedData: any;
+  pageSize = 10; // Initial page size
+  pageNumber = 0; // Initial page index
+  totalItems = 0; // Total items
   /**
    * Constructor
    */
@@ -91,6 +94,7 @@ export class TenantComponent {
 
       this.getTenants();
   }
+  
 
   addTenant() {
     this.drawerComponent = 'new-tenant';
@@ -127,16 +131,25 @@ export class TenantComponent {
 
   // get data from api
   getTenants() {
-    console.log('get tenants');
-    this.tenants$ = this._tenantService.getAll().pipe(
-      map((tenants: any[]) => {
-        return tenants.map((tenant, index) => {
-          return {
-            ...tenant,
-            stt: index + 1
-          };
-        });
+    const query = {
+      pageNumber: this.pageNumber + 1,
+      pageSize: this.pageSize
+    };
+    this.tenants$ = this._tenantService.getAll(query).pipe(
+      map((data: any) => {
+          const tenants: any[] = data.items.map((tenant, index: number) => ({
+              ...tenant,
+              stt: index + 1
+          }));
+          this.totalItems = data.count;
+          return { tenants };
       })
     );
+  }
+
+  onPageChange(event): void {
+    this.pageNumber = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.getTenants();
   }
 }
