@@ -7,12 +7,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { RouterLink } from '@angular/router';
 import { FuseDrawerComponent } from '@fuse/components/drawer';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { NewTenantComponent } from './new-tenant/new-tenant.component';
 import { EditTenantComponent } from './edit-tenant/edit-tenant.component';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { TenantService } from 'app/services/tenant.service';
 
 @Component({
   selector: 'app-tenant',
@@ -47,36 +48,18 @@ import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 export class TenantComponent {
 
   @ViewChild('addDrawer', { static: false }) addDrawer: FuseDrawerComponent;
-  public tenantsData: any[] = [
-    {
-      stt: '1',
-      id: '1',
-      name: 'Công ty TNHH Một mình tao chơi',
-      code: 'MMTC-001',
-      description: 'Công ty TNHH Một mình tao chơi',
-    },
-    {
-      stt: '2',
-      id: '2',
-      name: 'Công ty TNHH Một mình tao chơi',
-      code: 'MMTC-001',
-      description: 'Công ty TNHH Một mình tao chơi',
-    },
-  ];
 
-  public tenants$: Observable<any[]> = new Observable(observer => {
-    observer.next(this.tenantsData);
-    observer.complete();
-  });
+  public tenants$: Observable<any[]>;
 
   drawerComponent: 'new-tenant' | 'edit-tenant';
   configForm: UntypedFormGroup;
-
+  selectedData: any;
   /**
    * Constructor
    */
   constructor(private _fuseConfirmationService: FuseConfirmationService,
               private _formBuilder: UntypedFormBuilder,
+              private _tenantService: TenantService
   )
   {
   }
@@ -105,6 +88,8 @@ export class TenantComponent {
           }),
           dismissible: true,
       });
+
+      this.getTenants();
   }
 
   addTenant() {
@@ -117,16 +102,13 @@ export class TenantComponent {
   }
 
   editTenant(tenant: any) {
-    console.log(tenant);
     this.drawerComponent = 'edit-tenant';
     this.addDrawer.open();
+    // pass data to edit-tenant component
+    this.selectedData = tenant;
   }
 
-  deleteTenant(tenant: any) {
-    this.openConfirmationDialog();
-  }
-
-  openConfirmationDialog(): void
+  deleteTenant(tenant): void
   {
       // Open the dialog and save the reference of it
       const dialogRef = this._fuseConfirmationService.open(this.configForm.value);
@@ -136,8 +118,25 @@ export class TenantComponent {
       {
           console.log(result);
           if(result === 'confirmed') {
-            console.log('Delete');
+            this._tenantService.delete(tenant.id).subscribe(() => {
+              this.getTenants();
+            });
           }
       });
+  }
+
+  // get data from api
+  getTenants() {
+    console.log('get tenants');
+    this.tenants$ = this._tenantService.getAll().pipe(
+      map((tenants: any[]) => {
+        return tenants.map((tenant, index) => {
+          return {
+            ...tenant,
+            stt: index + 1
+          };
+        });
+      })
+    );
   }
 }

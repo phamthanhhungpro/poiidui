@@ -40,7 +40,7 @@
     </div>
 
     <!-- Main -->
-    <div class="flex-auto -mt-16 p-6 sm:p-10 rounded-t-2xl shadow overflow-y-auto bg-card" cdkScrollable>
+    <div class="flex-auto -mt-16 p-6 sm:p-10 rounded-t-xl shadow overflow-y-auto bg-card" cdkScrollable>
 
         <!-- CONTENT GOES HERE -->
         <div class="flex flex-auto overflow-hidden h-400 min-h-400 max-h-400 border-2 border-dashed border-gray-300 rounded-2xl">
@@ -372,12 +372,11 @@
     <div class="flex flex-col w-full overflow-auto bg-card">
         <!-- New Tenant -->
         <ng-container *ngIf="drawerComponent === 'new-tenant'">
-            <app-new-tenant [drawer]="addDrawer"></app-new-tenant>
+            <app-new-tenant [drawer]="addDrawer" (onClosed)="getTenants()"></app-new-tenant>
         </ng-container>
         <!-- Edit Tenant -->
         <ng-container *ngIf="drawerComponent === 'edit-tenant'">
-            <app-edit-tenant [drawer]="addDrawer" [tenant]="selectedtenant"></app-edit-tenant>
+            <app-edit-tenant [drawer]="addDrawer" [data]="selectedData" (onClosed)="getTenants()"></app-edit-tenant>
         </ng-container>
-
     </div>
 </fuse-drawer>
