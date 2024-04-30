@@ -10,6 +10,9 @@ import { FuseDrawerComponent } from '@fuse/components/drawer';
 import { Observable } from 'rxjs';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { NewTenantComponent } from './new-tenant/new-tenant.component';
+import { EditTenantComponent } from './edit-tenant/edit-tenant.component';
+import { FuseConfirmationService } from '@fuse/services/confirmation';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-tenant',
@@ -18,7 +21,7 @@ import { NewTenantComponent } from './new-tenant/new-tenant.component';
   styles: [
     /* language=SCSS */
     `
-        .inventory-grid {
+        .tenant-grid {
             grid-template-columns: 48px auto 40px;
 
             @screen sm {
@@ -26,11 +29,11 @@ import { NewTenantComponent } from './new-tenant/new-tenant.component';
             }
 
             @screen md {
-                grid-template-columns: 48px 112px auto 112px 72px;
+                grid-template-columns: 48px auto 112px 72px;
             }
 
             @screen lg {
-                grid-template-columns: 48px 112px auto 112px 96px 96px 72px;
+                grid-template-columns: 48px 112px 200px auto 96px;
             }
         }
     `,
@@ -38,58 +41,70 @@ import { NewTenantComponent } from './new-tenant/new-tenant.component';
   encapsulation: ViewEncapsulation.None,
   imports: [MatIconModule, RouterLink, MatButtonModule, CdkScrollable, NgIf,
     AsyncPipe, NgForOf, CurrencyPipe, MatButtonModule, MatMenuModule,
-    FuseDrawerComponent, MatDividerModule, MatSidenavModule, NewTenantComponent],
+    FuseDrawerComponent, MatDividerModule, MatSidenavModule, NewTenantComponent,
+    EditTenantComponent],
 })
 export class TenantComponent {
 
   @ViewChild('addDrawer', { static: false }) addDrawer: FuseDrawerComponent;
-  public productsData: any[] = [
+  public tenantsData: any[] = [
     {
+      stt: '1',
       id: '1',
-      name: 'Laptop',
-      category: 'Electronics',
-      vendor: 'Vendor X',
-      stock: 20,
-      reserved: 5,
-      cost: 800,
-      basePrice: 999,
-      taxPercent: 10,
-      price: 1099,
-      weight: 1.5,
-      thumbnail: 'laptop-thumbnail.jpg',
-      images: ['laptop-image1.jpg', 'laptop-image2.jpg'],
-      active: true
+      name: 'Công ty TNHH Một mình tao chơi',
+      code: 'MMTC-001',
+      description: 'Công ty TNHH Một mình tao chơi',
     },
     {
+      stt: '2',
       id: '2',
-      name: 'Smartphone',
-      category: 'Electronics',
-      vendor: 'Vendor Y',
-      stock: 30,
-      reserved: 10,
-      cost: 500,
-      basePrice: 699,
-      taxPercent: 8,
-      price: 759,
-      weight: 0.5,
-      thumbnail: 'smartphone-thumbnail.jpg',
-      images: ['smartphone-image1.jpg', 'smartphone-image2.jpg'],
-      active: true
+      name: 'Công ty TNHH Một mình tao chơi',
+      code: 'MMTC-001',
+      description: 'Công ty TNHH Một mình tao chơi',
     },
-    // Add more products here...
   ];
 
-  public products$: Observable<any[]> = new Observable(observer => {
-    observer.next(this.productsData);
+  public tenants$: Observable<any[]> = new Observable(observer => {
+    observer.next(this.tenantsData);
     observer.complete();
   });
 
-  drawerComponent: 'new-tenant';
+  drawerComponent: 'new-tenant' | 'edit-tenant';
+  configForm: UntypedFormGroup;
+
   /**
    * Constructor
    */
-  constructor()
+  constructor(private _fuseConfirmationService: FuseConfirmationService,
+              private _formBuilder: UntypedFormBuilder,
+  )
   {
+  }
+
+  ngOnInit(): void
+  {
+      // Build the config form
+      this.configForm = this._formBuilder.group({
+          title      : 'Xóa cơ quan',
+          message    : 'Xóa cơ quan này khỏi hệ thống? <span class="font-medium">Thao tác này không thể hoàn tác!</span>',
+          icon       : this._formBuilder.group({
+              show : true,
+              name : 'heroicons_outline:exclamation-triangle',
+              color: 'warn',
+          }),
+          actions    : this._formBuilder.group({
+              confirm: this._formBuilder.group({
+                  show : true,
+                  label: 'Remove',
+                  color: 'warn',
+              }),
+              cancel : this._formBuilder.group({
+                  show : true,
+                  label: 'Cancel',
+              }),
+          }),
+          dismissible: true,
+      });
   }
 
   addTenant() {
@@ -97,4 +112,32 @@ export class TenantComponent {
     this.addDrawer.open();
   }
 
+  closeDrawer() {
+    this.addDrawer.close();
+  }
+
+  editTenant(tenant: any) {
+    console.log(tenant);
+    this.drawerComponent = 'edit-tenant';
+    this.addDrawer.open();
+  }
+
+  deleteTenant(tenant: any) {
+    this.openConfirmationDialog();
+  }
+
+  openConfirmationDialog(): void
+  {
+      // Open the dialog and save the reference of it
+      const dialogRef = this._fuseConfirmationService.open(this.configForm.value);
+
+      // Subscribe to afterClosed from the dialog reference
+      dialogRef.afterClosed().subscribe((result) =>
+      {
+          console.log(result);
+          if(result === 'confirmed') {
+            console.log('Delete');
+          }
+      });
+  }
 }

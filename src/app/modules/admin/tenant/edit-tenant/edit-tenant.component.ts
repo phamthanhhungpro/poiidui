@@ -9,22 +9,22 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 
 @Component({
-  selector: 'app-new-tenant',
+  selector: 'app-edit-tenant',
   standalone: true,
   imports        : [MatButtonModule, MatIconModule, NgIf, NgFor, MatDividerModule,
                     FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatFormFieldModule,
   ],
-  templateUrl: './new-tenant.component.html'
+  templateUrl: './edit-tenant.component.html'
 })
-export class NewTenantComponent {
+export class EditTenantComponent {
   @Input() drawer: MatDrawer;
-  addTenantForm: UntypedFormGroup;
+  editTenantForm: UntypedFormGroup;
   
   /**
    *
    */
   constructor(private _formBuilder: UntypedFormBuilder,) {
-    this.addTenantForm = this._formBuilder.group({
+    this.editTenantForm = this._formBuilder.group({
       name: ['', Validators.required],
       code: [''],
       description: ['']
@@ -36,11 +36,11 @@ export class NewTenantComponent {
   
   // clear form when close drawer
   clearForm(): void {
-    this.addTenantForm.reset();
+    this.editTenantForm.reset();
   }
 
   // close drawer and reset form
-  cancelAdd(): void {
+  cancelEdit(): void {
     this.drawer.close();
     this.clearForm();
   }
