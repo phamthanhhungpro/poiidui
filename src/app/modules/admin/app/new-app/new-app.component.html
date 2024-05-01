@@ -3,14 +3,14 @@
     <!-- Header -->
     <div class="flex flex-0 items-center justify-between h-18 -mb-px px-6 bg-gray-50 dark:bg-transparent">
 
-        <div class="ml-2 text-2xl font-semibold">Sửa cơ quan</div>
+        <div class="ml-2 text-2xl font-semibold">Thêm mới ứng dụng</div>
 
         <div class="flex items-center">
             <!-- More menu -->
             <button mat-flat-button [color]="'primary'">
                 Lưu
             </button>
-            <button class="px-6 ml-3" mat-button (click)="cancelEdit()">
+            <button class="px-6 ml-3" mat-button (click)="cancelAdd()">
                 Hủy
             </button>
         </div>
@@ -18,26 +18,26 @@
     </div>
     <mat-divider class="mb-4"></mat-divider>
     <div class="flex flex-col gt-xs:flex-row gt-xs:items-start p-6">
-        <form [formGroup]="editTenantForm">
+        <form [formGroup]="addAppForm">
         <div class="flex-auto min-w-64">
             <div class="flex">
                 <mat-form-field class="flex-auto">
-                    <mat-label>Tên cơ quan</mat-label>
-                    <input matInput [placeholder]="'Tên cơ quan'" [formControlName]="'name'">
+                    <mat-label>Tên ứng dụng</mat-label>
+                    <input matInput [placeholder]="'Tên ứng dụng'" [formControlName]="'name'">
                     <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
                 </mat-form-field>
             </div>
             <div class="flex">
                 <mat-form-field class="flex-auto">
-                    <mat-label>Mã cơ quan</mat-label>
-                    <input matInput [placeholder]="'Mã cơ quan'" [formControlName]="'code'">
+                    <mat-label>Mã ứng dụng</mat-label>
+                    <input matInput [placeholder]="'Mã ứng dụng'" [formControlName]="'code'">
                     <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:code-bracket'"></mat-icon>
                 </mat-form-field>
             </div>
             <div class="flex">
                 <mat-form-field class="flex-auto">
                     <mat-label>Mô tả</mat-label>
-                    <textarea matInput [placeholder]="'Mô tả về cơ quan'" [rows]="3" [formControlName]="'description'"></textarea>
+                    <textarea matInput [placeholder]="'Mô tả về ứng dụng'" [rows]="3" [formControlName]="'description'"></textarea>
                     <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:bars-3-bottom-left'"></mat-icon>
                 </mat-form-field>
             </div>
