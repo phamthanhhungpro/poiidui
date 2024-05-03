@@ -48,6 +48,7 @@ import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 export class TenantComponent {
 
   @ViewChild('addDrawer', { static: false }) addDrawer: FuseDrawerComponent;
+  
   @ViewChild('paginator') paginator: MatPaginator;
 
   tenants$;
@@ -94,16 +95,19 @@ export class TenantComponent {
 
       this.getTenants();
   }
-  
 
   addTenant() {
     this.drawerComponent = 'new-tenant';
     this.addDrawer.open();
   }
 
-  closeDrawer() {
-    this.addDrawer.close();
+  // we need this function to distroy the child component when drawer is closed
+  drawerOpenedChanged(isOpened) {
+    if (!isOpened) {
+      this.drawerComponent = null;
+    }
   }
+
 
   editTenant(tenant: any) {
     this.drawerComponent = 'edit-tenant';

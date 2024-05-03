@@ -44,5 +44,33 @@
             </div>
         </div>
         </form>
+        <div class="flex">
+            <div class="flex-auto">
+                <mat-label class="font-medium">Chọn ứng dụng</mat-label>
+                <section>
+                    <span>
+                      <mat-checkbox [checked]="allComplete"
+                                    [color]="appCheckbox.color"
+                                    [indeterminate]="someComplete()"
+                                    (change)="setAll($event.checked)">
+                        {{appCheckbox.name}}
+                      </mat-checkbox>
+                    </span>
+                    <span>
+                      <ul class="pl-4">
+                        @for (subtask of appCheckbox.subtasks; track subtask) {
+                          <li>
+                            <mat-checkbox [(ngModel)]="subtask.completed"
+                                          [color]="subtask.color"
+                                          (ngModelChange)="updateAllComplete()">
+                              {{subtask.name}}
+                            </mat-checkbox>
+                          </li>
+                        }
+                      </ul>
+                    </span>
+                  </section>
+            </div>
+        </div>
     </div>
 </div>

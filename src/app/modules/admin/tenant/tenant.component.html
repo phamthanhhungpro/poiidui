@@ -368,15 +368,11 @@
 </div>
 
 <fuse-drawer class="w-screen min-w-screen sm:w-140 sm:min-w-140 z-999" fixed [mode]="'over'" [name]="'addDrawer'"
-    [position]="'right'" [opened]="false" #addDrawer>
+    [position]="'right'" [opened]="false" (openedChanged)="drawerOpenedChanged($event)" #addDrawer>
     <div class="flex flex-col w-full overflow-auto bg-card">
         <!-- New Tenant -->
-        <ng-container *ngIf="drawerComponent === 'new-tenant'">
-            <app-new-tenant [drawer]="addDrawer" (onClosed)="getTenants()"></app-new-tenant>
-        </ng-container>
+        <app-new-tenant *ngIf="drawerComponent === 'new-tenant'" [drawer]="addDrawer" (onClosed)="getTenants()"></app-new-tenant>
         <!-- Edit Tenant -->
-        <ng-container *ngIf="drawerComponent === 'edit-tenant'">
-            <app-edit-tenant [drawer]="addDrawer" [data]="selectedData" (onClosed)="getTenants()"></app-edit-tenant>
-        </ng-container>
+        <app-edit-tenant  *ngIf="drawerComponent === 'edit-tenant'" [drawer]="addDrawer" [data]="selectedData" (onClosed)="getTenants()"></app-edit-tenant>
     </div>
 </fuse-drawer>
