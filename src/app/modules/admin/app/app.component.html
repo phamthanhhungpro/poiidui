@@ -43,10 +43,11 @@
     <div class="flex-auto -mt-16 p-6 sm:p-10 rounded-t-2xl shadow overflow-y-auto bg-card" cdkScrollable>
 
         <!-- CONTENT GOES HERE -->
-        <div class="flex flex-auto overflow-hidden h-400 min-h-400 max-h-400 border-2 border-dashed border-gray-300 rounded-2xl">
+        <div
+            class="flex flex-auto overflow-hidden h-400 min-h-400 max-h-400 border-2 border-dashed border-gray-300 rounded-2xl">
             <div class="flex flex-col flex-auto sm:mb-18 overflow-hidden sm:overflow-y-auto">
-                <ng-container *ngIf="(apps$ | async) as apps">
-                    <ng-container *ngIf="apps.length > 0; else noapps">
+                <ng-container *ngIf="(apps$ | async) as data">
+                    <ng-container *ngIf="data.apps.length > 0; else noapps">
                         <div class="grid">
                             <!-- Header -->
                             <div class="app-grid z-10 sticky top-0 grid gap-10 py-4 px-6 md:px-8 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5"
@@ -60,8 +61,8 @@
                                 <div class="">Thao tác</div>
                             </div>
                             <!-- Rows -->
-                            <ng-container *ngIf="(apps$ | async) as apps">
-                                <ng-container *ngFor="let app of apps; trackBy: trackByFn">
+                            <ng-container *ngIf="(apps$ | async) as data">
+                                <ng-container *ngFor="let app of data.apps; trackBy: trackByFn">
                                     <div class="app-grid grid items-center gap-10 py-3 px-6 md:px-8 border-b">
                                         <div class="hidden md:block">
                                             {{app.stt}}
@@ -88,6 +89,14 @@
 
                                         </div>
                                     </div>
+
+                                    <mat-paginator #paginator
+                                        class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+                                        [ngClass]="{'pointer-events-none': isLoading}" [length]="totalItems"
+                                        [pageSize]="pageSize" [pageIndex]="pageNumber"
+                                        [pageSizeOptions]="[5, 10, 25, 100]" [showFirstLastButtons]="true"
+                                        (page)="onPageChange($event)">
+                                    </mat-paginator>
 
                                 </ng-container>
                             </ng-container>
@@ -368,16 +377,11 @@
 </div>
 
 <fuse-drawer class="w-screen min-w-screen sm:w-140 sm:min-w-140 z-999" fixed [mode]="'over'" [name]="'addDrawer'"
-    [position]="'right'" [opened]="false" #addDrawer>
+    [position]="'right'" [opened]="false" (openedChanged)="drawerOpenedChanged($event)" #addDrawer>
     <div class="flex flex-col w-full overflow-auto bg-card">
         <!-- New App -->
-        <ng-container *ngIf="drawerComponent === 'new-app'">
-            <app-new-app [drawer]="addDrawer"></app-new-app>
-        </ng-container>
+        <app-new-app *ngIf="drawerComponent === 'new-app'" [drawer]="addDrawer" (onClosed)="getApps()"></app-new-app>
         <!-- Edit App -->
-        <ng-container *ngIf="drawerComponent === 'edit-app'">
-            <app-edit-app [drawer]="addDrawer" [app]="selectedapp"></app-edit-app>
-        </ng-container>
-
+        <app-edit-app  *ngIf="drawerComponent === 'edit-app'" [drawer]="addDrawer" [data]="selectedData" (onClosed)="getApps()"></app-edit-app>
     </div>
 </fuse-drawer>

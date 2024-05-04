@@ -7,12 +7,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { RouterLink } from '@angular/router';
 import { FuseDrawerComponent } from '@fuse/components/drawer';
-import { Observable } from 'rxjs';
+import { map } from 'rxjs';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { NewAppComponent } from './new-app/new-app.component';
 import { EditAppComponent } from './edit-app/edit-app.component';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { AppService } from 'app/services/app.service';
 
 @Component({
   selector: 'app-app',
@@ -47,36 +49,21 @@ import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 export class AppComponent {
 
   @ViewChild('addDrawer', { static: false }) addDrawer: FuseDrawerComponent;
-  public appsData: any[] = [
-    {
-      stt: '1',
-      id: '1',
-      name: 'Thần số học',
-      code: 'TK',
-      description: 'Vẽ những con số diệu kì từ những giấc mơ',
-    },
-    {
-      stt: '2',
-      id: '2',
-      name: 'Lập trình',
-      code: 'LT',
-      description: 'Xây nên những ngồi nhà từ những dòng code',
-    },
-  ];
-
-  public apps$: Observable<any[]> = new Observable(observer => {
-    observer.next(this.appsData);
-    observer.complete();
-  });
-
+  @ViewChild('paginator') paginator: MatPaginator;
+  
+  apps$;
   drawerComponent: 'new-app' | 'edit-app';
   configForm: UntypedFormGroup;
-
+  selectedData: any;
+  pageSize = 10; // Initial page size
+  pageNumber = 0; // Initial page index
+  totalItems = 0; // Total items
   /**
    * Constructor
    */
   constructor(private _fuseConfirmationService: FuseConfirmationService,
               private _formBuilder: UntypedFormBuilder,
+              private _appService: AppService
   )
   {
   }
@@ -105,6 +92,8 @@ export class AppComponent {
           }),
           dismissible: true,
       });
+
+      this.getApps();
   }
 
   addApp() {
@@ -112,21 +101,23 @@ export class AppComponent {
     this.addDrawer.open();
   }
 
-  closeDrawer() {
-    this.addDrawer.close();
+  // we need this function to distroy the child component when drawer is closed
+  drawerOpenedChanged(isOpened) {
+    if (!isOpened) {
+      this.drawerComponent = null;
+    }
   }
 
   editApp(app: any) {
     console.log(app);
     this.drawerComponent = 'edit-app';
     this.addDrawer.open();
+
+    // pass data to edit-app component
+    this.selectedData = app;
   }
 
-  deleteApp(app: any) {
-    this.openConfirmationDialog();
-  }
-
-  openConfirmationDialog(): void
+  deleteApp(app): void 
   {
       // Open the dialog and save the reference of it
       const dialogRef = this._fuseConfirmationService.open(this.configForm.value);
@@ -136,8 +127,34 @@ export class AppComponent {
       {
           console.log(result);
           if(result === 'confirmed') {
-            console.log('Delete');
+            this._appService.delete(app.id).subscribe(() => {
+              this.getApps();
+            });
           }
       });
+  }
+
+  // get data from api
+  getApps() {
+    const query = {
+      pageNumber: this.pageNumber + 1,
+      pageSize: this.pageSize
+    };
+    this.apps$ = this._appService.getAll(query).pipe(
+      map((data: any) => {
+          const apps: any[] = data.items.map((app, index: number) => ({
+              ...app,
+              stt: index + 1
+          }));
+          this.totalItems = data.count;
+          return { apps };
+      })
+    );
+  }
+
+  onPageChange(event): void {
+    this.pageNumber = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.getApps();
   }
 }
