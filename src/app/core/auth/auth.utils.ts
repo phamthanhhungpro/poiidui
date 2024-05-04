@@ -26,8 +26,8 @@ export class AuthUtils
         }
 
         // Get the expiration date
-        const date = this._getTokenExpirationDate(token);
-
+        var dateString = localStorage.getItem('expireDate') ?? '';
+        const date = new Date(dateString);
         offsetSeconds = offsetSeconds || 0;
 
         if ( date === null )
@@ -136,62 +136,5 @@ export class AuthUtils
             }
         }
         return this._b64DecodeUnicode(output);
-    }
-
-    /**
-     * Decode token
-     *
-     * @param token
-     * @private
-     */
-    private static _decodeToken(token: string): any
-    {
-        // Return if there is no token
-        if ( !token )
-        {
-            return null;
-        }
-
-        // Split the token
-        const parts = token.split('.');
-
-        if ( parts.length !== 3 )
-        {
-            throw new Error('The inspected token doesn\'t appear to be a JWT. Check to make sure it has three parts and see https://jwt.io for more.');
-        }
-
-        // Decode the token using the Base64 decoder
-        const decoded = this._urlBase64Decode(parts[1]);
-
-        if ( !decoded )
-        {
-            throw new Error('Cannot decode the token.');
-        }
-
-        return JSON.parse(decoded);
-    }
-
-    /**
-     * Get token expiration date
-     *
-     * @param token
-     * @private
-     */
-    private static _getTokenExpirationDate(token: string): Date | null
-    {
-        // Get the decoded token
-        const decodedToken = this._decodeToken(token);
-
-        // Return if the decodedToken doesn't have an 'exp' field
-        if ( !decodedToken.hasOwnProperty('exp') )
-        {
-            return null;
-        }
-
-        // Convert the expiration date
-        const date = new Date(0);
-        date.setUTCSeconds(decodedToken.exp);
-
-        return date;
     }
 }

@@ -2,7 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { AuthUtils } from 'app/core/auth/auth.utils';
 import { UserService } from 'app/core/user/user.service';
+import { UserApiService } from 'app/services/user.service';
+import { environment } from 'environments/environment';
 import { catchError, Observable, of, switchMap, throwError } from 'rxjs';
+import { user as userData } from 'app/mock-api/common/user/data';
+import { cloneDeep } from 'lodash-es';
+
+const authUrl = environment.idApiUrl + 'auth';
 
 @Injectable({providedIn: 'root'})
 export class AuthService
@@ -10,6 +16,7 @@ export class AuthService
     private _authenticated: boolean = false;
     private _httpClient = inject(HttpClient);
     private _userService = inject(UserService);
+    private _userApiService = inject(UserApiService)
 
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
@@ -27,6 +34,30 @@ export class AuthService
     {
         return localStorage.getItem('accessToken') ?? '';
     }
+
+    setExpireDate(expiresIn: number) {
+        const currentDate = new Date();
+        const expireDate = new Date(currentDate.getTime() + expiresIn * 1000); // Convert seconds to milliseconds
+        localStorage.setItem('expireDate', expireDate.toISOString());
+    }
+
+    getExpireDate(): any | null {
+        return localStorage.getItem('expireDate') ?? '';
+    }
+
+    /**
+     * Setter & getter for refresh token
+     */
+    set refreshToken(token: string)
+    {
+        localStorage.setItem('refreshToken', token);
+    }
+
+    get refreshToken(): string
+    {
+        return localStorage.getItem('refreshToken') ?? '';
+    }
+
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
@@ -57,7 +88,7 @@ export class AuthService
      *
      * @param credentials
      */
-    signIn(credentials: { email: string; password: string }): Observable<any>
+    signIn(credentials: { userName: string; password: string }): Observable<any>
     {
         // Throw error, if the user is already logged in
         if ( this._authenticated )
@@ -65,11 +96,16 @@ export class AuthService
             return throwError('User is already logged in.');
         }
 
-        return this._httpClient.post('api/auth/sign-in', credentials).pipe(
+        return this._httpClient.post(`${authUrl}/login`, credentials).pipe(
             switchMap((response: any) =>
             {
+                response.user = cloneDeep(userData);
+                console.log(response);
                 // Store the access token in the local storage
                 this.accessToken = response.accessToken;
+                this.setExpireDate(response.expiresIn);
+                
+                this.refreshToken = response.refreshToken;
 
                 // Set the authenticated flag to true
                 this._authenticated = true;
@@ -86,42 +122,42 @@ export class AuthService
     /**
      * Sign in using the access token
      */
-    signInUsingToken(): Observable<any>
-    {
-        // Sign in using the token
-        return this._httpClient.post('api/auth/sign-in-with-token', {
-            accessToken: this.accessToken,
-        }).pipe(
-            catchError(() =>
+    // signInUsingToken(): Observable<any>
+    // {
+    //     // Sign in using the token
+    //     return this._httpClient.post('api/auth/sign-in-with-token', {
+    //         accessToken: this.accessToken,
+    //     }).pipe(
+    //         catchError(() =>
 
-                // Return false
-                of(false),
-            ),
-            switchMap((response: any) =>
-            {
-                // Replace the access token with the new one if it's available on
-                // the response object.
-                //
-                // This is an added optional step for better security. Once you sign
-                // in using the token, you should generate a new one on the server
-                // side and attach it to the response object. Then the following
-                // piece of code can replace the token with the refreshed one.
-                if ( response.accessToken )
-                {
-                    this.accessToken = response.accessToken;
-                }
+    //             // Return false
+    //             of(false),
+    //         ),
+    //         switchMap((response: any) =>
+    //         {
+    //             // Replace the access token with the new one if it's available on
+    //             // the response object.
+    //             //
+    //             // This is an added optional step for better security. Once you sign
+    //             // in using the token, you should generate a new one on the server
+    //             // side and attach it to the response object. Then the following
+    //             // piece of code can replace the token with the refreshed one.
+    //             if ( response.accessToken )
+    //             {
+    //                 this.accessToken = response.accessToken;
+    //             }
 
-                // Set the authenticated flag to true
-                this._authenticated = true;
+    //             // Set the authenticated flag to true
+    //             this._authenticated = true;
 
-                // Store the user on the user service
-                this._userService.user = response.user;
+    //             // Store the user on the user service
+    //             this._userService.user = response.user;
 
-                // Return true
-                return of(true);
-            }),
-        );
-    }
+    //             // Return true
+    //             return of(true);
+    //         }),
+    //     );
+    // }
 
     /**
      * Sign out
@@ -176,12 +212,14 @@ export class AuthService
         }
 
         // Check the access token expire date
-        if ( AuthUtils.isTokenExpired(this.accessToken) )
-        {
-            return of(false);
+        const expireDate = this.getExpireDate();
+        if (expireDate) {
+            const currentDate = new Date();
+            const expireDateObj = new Date(expireDate);
+            if (currentDate < expireDateObj) {
+                return of(true);
+            }
         }
-
-        // If the access token exists, and it didn't expire, sign in using it
-        return this.signInUsingToken();
+        return of(false);
     }
 }
