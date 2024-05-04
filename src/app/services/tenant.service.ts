@@ -4,7 +4,7 @@ import { environment } from 'environments/environment';
 import { Observable } from 'rxjs';
 import { Tenant } from 'app/model/tenant.model';
 import { objectToQueryString } from './queryStringHelper';
-const baseUrl = environment.apiUrl + 'Tenant';
+const baseUrl = environment.idApiUrl + 'Tenant';
 
 @Injectable({
   providedIn: 'root'
