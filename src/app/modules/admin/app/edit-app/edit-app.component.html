@@ -7,7 +7,7 @@
 
         <div class="flex items-center">
             <!-- More menu -->
-            <button mat-flat-button [color]="'primary'">
+            <button mat-flat-button [color]="'primary'" (click)="save()">
                 Lưu
             </button>
             <button class="px-6 ml-3" mat-button (click)="cancelEdit()">
@@ -25,6 +25,7 @@
                     <mat-label>Tên ứng dụng</mat-label>
                     <input matInput [placeholder]="'Tên ứng dụng'" [formControlName]="'name'">
                     <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
+                    <mat-error *ngIf="editAppForm.get('name').hasError('required')">Tên ứng dụng không thể bỏ trống</mat-error>
                 </mat-form-field>
             </div>
             <div class="flex">

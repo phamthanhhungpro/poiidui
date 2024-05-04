@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,6 +7,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { AppService } from 'app/services/app.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-new-app',
@@ -18,12 +20,17 @@ import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup,
 })
 export class NewAppComponent {
   @Input() drawer: MatDrawer;
+  @Output() onClosed = new EventEmitter<any>();
   addAppForm: UntypedFormGroup;
   
   /**
    *
    */
-  constructor(private _formBuilder: UntypedFormBuilder,) {
+  constructor(private _formBuilder: UntypedFormBuilder,
+              private _appService: AppService,
+              private _snackBar: MatSnackBar,
+              private changeDetector: ChangeDetectorRef
+  ) {
     this.addAppForm = this._formBuilder.group({
       name: ['', Validators.required],
       code: [''],
@@ -32,6 +39,10 @@ export class NewAppComponent {
   }
 
   ngOnInit(): void {
+  }
+
+  ngAfterContentChecked(): void {
+    this.changeDetector.detectChanges();
   }
   
   // clear form when close drawer
@@ -44,5 +55,23 @@ export class NewAppComponent {
     this.drawer.close();
     this.clearForm();
   }
+
+  // save data
+  save(): void {
+    this._appService.create(this.addAppForm.value).subscribe(res => {
+      if(res.isSucceeded) {
+        this.openSnackBar('Thao tác thành công', 'Đóng');
+        this.onClosed.emit();
+        this.drawer.close();
+        this.clearForm();
+      } else {
+        this.openSnackBar('Thao tác thất bại', 'Đóng');
+      }
+    });
+  }
   
+  // snackbar
+  openSnackBar(message: string, action: string) {
+    this._snackBar.open(message, action);
+  }
 }
