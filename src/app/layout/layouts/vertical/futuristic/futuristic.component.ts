@@ -30,7 +30,7 @@ export class FuturisticLayoutComponent implements OnInit, OnDestroy
 {
     isScreenSmall: boolean;
     navigation: Navigation;
-    user: User;
+    user: any = {};
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     /**
@@ -75,14 +75,17 @@ export class FuturisticLayoutComponent implements OnInit, OnDestroy
             {
                 this.navigation = navigation;
             });
-
+        this._userService.get().subscribe(res => {
         // Subscribe to the user service
         this._userService.user$
             .pipe((takeUntil(this._unsubscribeAll)))
-            .subscribe((user: User) =>
+            .subscribe((user: any) =>
             {
                 this.user = user;
             });
+        });
+
+
 
         // Subscribe to media changes
         this._fuseMediaWatcherService.onMediaChange$
