@@ -1,4 +1,4 @@
-const apiUrl = 'http://prod-url:5000';
+const apiUrl = 'http://113.160.187.187:1118/';
 export const environment = {
     production: true,
     apiUrl: apiUrl,

@@ -27,11 +27,11 @@ import { AppService } from 'app/services/app.service';
             grid-template-columns: 48px auto 40px;
 
             @screen sm {
-                grid-template-columns: 48px auto 112px 72px;
+                grid-template-columns: 100px auto 112px;
             }
 
             @screen md {
-                grid-template-columns: 48px auto 112px 72px;
+                grid-template-columns: 100px auto 112px;
             }
 
             @screen lg {

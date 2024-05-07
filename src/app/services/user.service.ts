@@ -41,5 +41,18 @@ export class UserApiService {
   login(credentials: any): Observable<any> {
     return this.http.post(`${authUrl}/login`, credentials);
   }
+  getListUser(body: any): Observable<any> {
+    return this.http.post(`${baseUrl}/list`, body);
+  }
+
+  uploadAvatar(avatar: File) {
+    const fd = new FormData();
+    fd.append('avatar', avatar, avatar.name);
+    return this.http.post<any>(`${baseUrl}/avatar`, fd);
+  }
+
+  createUser(data: any): Observable<any> {
+    return this.http.post(`${authUrl}/create-user`, data);
+  }
 
 }

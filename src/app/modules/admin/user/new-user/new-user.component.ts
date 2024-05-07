@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,57 +7,68 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import {MatCheckboxModule} from '@angular/material/checkbox';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { RoleService } from 'app/services/role.service';
+import { MatSelectModule } from '@angular/material/select';
+import { UserApiService } from 'app/services/user.service';
+import { Task } from 'app/model/checkbox.model';
+import { AppService } from 'app/services/app.service';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { AuthService } from 'app/core/auth/auth.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-new-user',
   standalone: true,
-  styles: [
-    /* language=SCSS */
-    ` 
-      .example-section {
-        display: flex;
-        align-content: center;
-        align-items: center;
-        height: 60px;
-      }
-      
-      .example-margin {
-        margin: 10px;
-      }
-
-      .custom-image {
-        width: 200px;
-      }
-    `,
-  ],
-  imports        : [MatButtonModule, MatIconModule, NgIf, NgFor, MatDividerModule,
-                    FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule,
-                    MatFormFieldModule, MatCheckboxModule
+  imports: [MatButtonModule, MatIconModule, NgIf, NgFor, MatDividerModule,
+    FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule,
+    MatFormFieldModule, MatCheckboxModule, MatSelectModule,CdkScrollable
   ],
   templateUrl: './new-user.component.html'
 })
 export class NewUserComponent {
   @Input() drawer: MatDrawer;
+  @Output() onClosed = new EventEmitter<any>();
+
   addUserForm: UntypedFormGroup;
-  
+  roles: any = [];
+  appCheckbox: Task = {
+    name: 'Chọn tất cả',
+    completed: false,
+    color: 'primary',
+    subtasks: [
+    ],
+  };
+
   /**
    *
    */
-  constructor(private _formBuilder: UntypedFormBuilder,) {
+  constructor(private _formBuilder: UntypedFormBuilder,
+    private _roleService: RoleService,
+    private _userService: UserApiService,
+    private _appService: AppService,
+    private _snackBar: MatSnackBar,
+  ) {
     this.addUserForm = this._formBuilder.group({
-      fullname: ['', Validators.required],
-      address: [''],
+      surName: ['', Validators.required],
+      name: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      userName: ['', Validators.required],
+      passWord: ['', Validators.required],
       phone: [''],
-      isActive:['']
-    });    
+      role: ['', Validators.required],
+      avatar: [''],
+    });
   }
 
   ngOnInit(): void {
+    this.getRoles();
+    this.getApps();
   }
 
   selectedFile: File | null = null;
   selectedFileURL: string | ArrayBuffer | null = null;
+  avatarUrl: any = "";
 
   onFileSelected(event: any) {
     this.selectedFile = event.target.files[0];
@@ -68,16 +79,21 @@ export class NewUserComponent {
       this.selectedFileURL = e.target.result;
     };
     reader.readAsDataURL(this.selectedFile);
+    this.uploadImage();
   }
 
   uploadImage() {
     if (this.selectedFile) {
-      // Perform the upload logic here
-      // You can use services or APIs to handle the file upload
-      console.log('Uploading file:', this.selectedFile);
+      this._userService.uploadAvatar(this.selectedFile)
+        .subscribe(res => {
+          // Handle response, e.g., update user profile with new avatar URL
+          this.avatarUrl = res.avatarUrl;
+        }, error => {
+          console.error("Failed to upload avatar:", error);
+        });
     }
   }
-  
+
   // clear form when close drawer
   clearForm(): void {
     this.addUserForm.reset();
@@ -88,5 +104,81 @@ export class NewUserComponent {
     this.drawer.close();
     this.clearForm();
   }
-  
+
+  // get list role to populate dropdown
+  getRoles(): void {
+    this._roleService.getAllNoPaging().subscribe(res => {
+      this.roles = res;
+    });
+  }
+
+  // checkbox handle
+  allComplete: boolean = false;
+
+  updateAllComplete() {
+    this.allComplete = this.appCheckbox.subtasks != null && this.appCheckbox.subtasks.length !== 0 && this.appCheckbox.subtasks.every(t => t.completed);
+  }
+
+  someComplete(): boolean {
+    if (this.appCheckbox.subtasks == null || this.appCheckbox.subtasks.length === 0) {
+      return false;
+    }
+
+    if (this.appCheckbox.subtasks.filter(t => t.completed).length === this.appCheckbox.subtasks.length) {
+      this.allComplete = true;
+    }
+    return this.appCheckbox.subtasks.filter(t => t.completed).length > 0 && !this.allComplete;
+  }
+
+
+  setAll(completed: boolean) {
+    this.allComplete = completed;
+    if (this.appCheckbox.subtasks == null || this.appCheckbox.subtasks.length === 0) {
+      return;
+    }
+    this.appCheckbox.subtasks.forEach(t => (t.completed = completed));
+  }
+
+  uncheckAll() {
+    this.allComplete = false;
+    this.appCheckbox.completed = false;
+    this.appCheckbox.subtasks.forEach(t => (t.completed = false));
+  }
+
+  // get list app to populate checkbox
+  getApps(): void {
+    this._appService.getAllNoPaging().subscribe(res => {
+      this.appCheckbox.subtasks = res.map(item => {
+        return { name: item.name, completed: false, color: 'primary', value: item.id };
+      });
+    });
+  }
+
+  // save data to db
+  save() {
+    var selectedApps = this.appCheckbox.subtasks.filter(t => t.completed).map(t => t.value);
+    this.addUserForm.value.appIds = selectedApps;
+    this.addUserForm.value.avatar = this.avatarUrl;
+
+    this._userService.createUser(this.addUserForm.value).subscribe(
+      (res) => {
+        this.openSnackBar('Thao tác thành công', 'Đóng');
+        this.onClosed.emit();
+        this.drawer.close();
+        this.clearForm();
+      },
+      (error) => {
+        // Handle error if observable emits an error
+        console.error('Error:', error);
+        // You can also display an error message to the user if needed
+        this.openSnackBar('Có lỗi xảy ra khi thực hiện thao tác', 'Đóng');
+      }
+    );
+  }
+
+    // snackbar
+    openSnackBar(message: string, action: string) {
+      this._snackBar.open(message, action, {duration: 2000});
+    }
+
 }

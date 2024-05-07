@@ -51,17 +51,10 @@ export class GroupComponent {
     {
       stt: '1',
       id: '1',
-      name: 'Năm anh em siu nhân',
-      code: 'SH',
-      description: 'Bảo vệ công lý',
-    },
-    {
-      stt: '2',
-      id: '2',
-      name: 'Cừu trắng',
-      code: 'CT',
-      description: 'Ghét sói xám',
-    },
+      name: 'Phòng Công nghệ thông tin',
+      code: 'CNTT',
+      description: 'Phòng Công nghệ thông tin',
+    }
   ];
 
   public groups$: Observable<any[]> = new Observable(observer => {
