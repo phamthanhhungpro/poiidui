@@ -2,5 +2,5 @@ const apiUrl = 'http://113.160.187.187:1118/';
 export const environment = {
     production: true,
     apiUrl: apiUrl,
-    idApiUrl: apiUrl + 'id/'
+    idApiUrl: apiUrl + 'id/api/'
 };
