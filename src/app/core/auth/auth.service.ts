@@ -108,6 +108,12 @@ export class AuthService {
                         // Set the authenticated flag to true
                         this._authenticated = true;
                         // Return a new observable with the response
+
+                        // set tenantId and role and userId to local storage
+                        localStorage.setItem('tenantId', userInfo.tenantId);
+                        localStorage.setItem('role', userInfo.role);
+                        localStorage.setItem('userId', userInfo.id);
+
                         return of(userInfo);
                     })
                 );
@@ -161,6 +167,11 @@ export class AuthService {
     signOut(): Observable<any> {
         // Remove the access token from the local storage
         localStorage.removeItem('accessToken');
+        localStorage.removeItem('expireDate');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('role');
+        localStorage.removeItem('tenantId');
+        localStorage.removeItem('userId');
 
         // Set the authenticated flag to false
         this._authenticated = false;

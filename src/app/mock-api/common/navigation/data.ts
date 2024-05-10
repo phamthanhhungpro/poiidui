@@ -1,5 +1,6 @@
 /* eslint-disable */
 import { FuseNavigationItem } from '@fuse/components/navigation';
+import { Constants } from '../constants';
 
 export const defaultNavigation: FuseNavigationItem[] = [
     {
@@ -13,14 +14,28 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 title: 'Cơ quan',
                 type: 'basic',
                 icon: 'heroicons_outline:building-office-2',
-                link: '/tenant'
+                link: '/tenant',
+                hidden(item) {
+                    // always hide this item if role is not SSA
+                    if (localStorage.getItem('role') !== Constants.ROLE_SSA) {
+                        return true;
+                    }
+                    return false;
+                },
             },
             {
                 id: 'group',
                 title: 'Nhóm',
                 type: 'basic',
                 icon: 'mat_outline:groups',
-                link: '/group'
+                link: '/group',
+                hidden(item) {
+                    // always hide this item if role is not SSA
+                    if (localStorage.getItem('role') === Constants.ROLE_SSA) {
+                        return true;
+                    }
+                    return false;
+                },
             },
             {
                 id: 'user',
@@ -30,18 +45,46 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 link: '/user'
             },
             {
-                id: 'app',
-                title: 'Ứng dụng',
+                id: 'app-ssa',
+                title: 'Quản lý ứng dụng',
                 type: 'basic',
                 icon: 'mat_outline:apps',
-                link: '/app'
+                link: '/app-ssa',
+                hidden(item) {
+                    // always hide this item if role is not SSA
+                    if (localStorage.getItem('role') !== Constants.ROLE_SSA) {
+                        return true;
+                    }
+                    return false;
+                },
+            },
+            {
+                id: 'app-admin',
+                title: 'Ứng dụng của tôi',
+                type: 'basic',
+                icon: 'mat_outline:apps',
+                link: '/app-admin',
+                hidden(item) {
+                    // always hide this item if role is SSA
+                    if (localStorage.getItem('role') === Constants.ROLE_SSA) {
+                        return true;
+                    }
+                    return false;
+                },
             },
             {
                 id: 'role',
                 title: 'Vai trò',
                 type: 'basic',
                 icon: 'heroicons_outline:newspaper',
-                link: '/role'
+                link: '/role',
+                hidden(item) {
+                    // always hide this item if role is not SSA
+                    if (localStorage.getItem('role') !== Constants.ROLE_SSA) {
+                        return true;
+                    }
+                    return false;
+                },
             }
         ]
     },

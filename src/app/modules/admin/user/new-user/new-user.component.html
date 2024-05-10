@@ -58,8 +58,18 @@
                 </div>
                 <div class="flex">
                     <mat-form-field class="flex-auto">
+                        <mat-label>Cơ quan</mat-label>
+                        <mat-select [formControlName]="'tenantId'">
+                            @for (tenant of tenants; track tenant) {
+                              <mat-option [value]="tenant.id">{{tenant.name}}</mat-option>
+                            }
+                          </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="flex">
+                    <mat-form-field class="flex-auto">
                         <mat-label>Vai trò</mat-label>
-                        <mat-select [formControlName]="'role'">
+                        <mat-select [formControlName]="'roleId'">
                             @for (role of roles; track role) {
                               <mat-option [value]="role.id">{{role.name}}</mat-option>
                             }

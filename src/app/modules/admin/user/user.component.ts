@@ -15,6 +15,7 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { UserApiService } from 'app/services/user.service';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { isAllowCRUD } from 'app/mock-api/common/user/roleHelper'
 
 @Component({
   selector: 'app-user',
@@ -42,6 +43,11 @@ export class UserComponent {
   totalItems = 0; // Total items
 
   selectedContact: any;
+  userInfo = {
+    role: localStorage.getItem('role'),
+    tenantId: localStorage.getItem('tenantId'),
+    userId: localStorage.getItem('userId')
+  }
   /**
    * Constructor
    */
@@ -134,11 +140,14 @@ export class UserComponent {
     this.getUsers();
   }
 
-    // we need this function to distroy the child component when drawer is closed
-    drawerOpenedChanged(isOpened) {
-      if (!isOpened) {
-        this.drawerComponent = null;
-      }
+  // we need this function to distroy the child component when drawer is closed
+  drawerOpenedChanged(isOpened) {
+    if (!isOpened) {
+      this.drawerComponent = null;
     }
-  
+  }
+
+  isAllowCRUD() {
+    return isAllowCRUD(this.userInfo.role);
+  }
 }

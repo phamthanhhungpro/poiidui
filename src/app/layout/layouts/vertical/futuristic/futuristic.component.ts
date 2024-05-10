@@ -75,6 +75,7 @@ export class FuturisticLayoutComponent implements OnInit, OnDestroy
             {
                 this.navigation = navigation;
             });
+            
         this._userService.get().subscribe(res => {
         // Subscribe to the user service
         this._userService.user$

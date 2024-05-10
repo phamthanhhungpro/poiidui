@@ -18,6 +18,10 @@ export class TenantService {
     return this.http.get<Tenant[]>(`${baseUrl}?${queryString}`);
   }
 
+  getAllNoPaging(): Observable<any[]> {
+    return this.http.get<any[]>(`${baseUrl}/nopaging`);
+  }
+
   get(id: any): Observable<Tenant> {
     return this.http.get<Tenant>(`${baseUrl}/${id}`);
   }

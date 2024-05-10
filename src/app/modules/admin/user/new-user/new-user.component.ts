@@ -16,6 +16,7 @@ import { AppService } from 'app/services/app.service';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { AuthService } from 'app/core/auth/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { TenantService } from 'app/services/tenant.service';
 
 @Component({
   selector: 'app-new-user',
@@ -32,6 +33,8 @@ export class NewUserComponent {
 
   addUserForm: UntypedFormGroup;
   roles: any = [];
+  tenants: any = [];
+
   appCheckbox: Task = {
     name: 'Chọn tất cả',
     completed: false,
@@ -48,6 +51,7 @@ export class NewUserComponent {
     private _userService: UserApiService,
     private _appService: AppService,
     private _snackBar: MatSnackBar,
+    private _tenantService: TenantService
   ) {
     this.addUserForm = this._formBuilder.group({
       surName: ['', Validators.required],
@@ -56,7 +60,8 @@ export class NewUserComponent {
       userName: ['', Validators.required],
       passWord: ['', Validators.required],
       phone: [''],
-      role: ['', Validators.required],
+      tenantId: ['', Validators.required],
+      roleId: ['', Validators.required],
       avatar: [''],
     });
   }
@@ -64,6 +69,7 @@ export class NewUserComponent {
   ngOnInit(): void {
     this.getRoles();
     this.getApps();
+    this.getTenant();
   }
 
   selectedFile: File | null = null;
@@ -112,6 +118,14 @@ export class NewUserComponent {
     });
   }
 
+  
+  // get list tenant to populate dropdown
+  getTenant(): void {
+    this._tenantService.getAllNoPaging().subscribe(res => {
+      this.tenants = res;
+    });
+  }
+
   // checkbox handle
   allComplete: boolean = false;
 
@@ -147,7 +161,7 @@ export class NewUserComponent {
 
   // get list app to populate checkbox
   getApps(): void {
-    this._appService.getAllNoPaging().subscribe(res => {
+    this._appService.getByUser().subscribe(res => {
       this.appCheckbox.subtasks = res.map(item => {
         return { name: item.name, completed: false, color: 'primary', value: item.id };
       });

@@ -7,30 +7,31 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { RouterLink } from '@angular/router';
 import { FuseDrawerComponent } from '@fuse/components/drawer';
-import { Observable, map } from 'rxjs';
+import { map } from 'rxjs';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { NewGroupComponent } from './new-group/new-group.component';
-import { EditGroupComponent } from './edit-group/edit-group.component';
+import { NewAppComponent } from './new-app/new-app.component';
+import { EditAppComponent } from './edit-app/edit-app.component';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
-import { GroupService } from 'app/services/group.service';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { AppService } from 'app/services/app.service';
 
 @Component({
-  selector: 'app-group',
+  selector: 'app-app',
   standalone: true,
-  templateUrl: './group.component.html',
+  templateUrl: './app.component.html',
   styles: [
     /* language=SCSS */
     `
-        .group-grid {
+        .app-grid {
             grid-template-columns: 48px auto 40px;
 
             @screen sm {
-                grid-template-columns: 48px auto 112px 72px;
+                grid-template-columns: 100px auto 112px;
             }
 
             @screen md {
-                grid-template-columns: 48px auto 112px 72px;
+                grid-template-columns: 100px auto 112px;
             }
 
             @screen lg {
@@ -42,16 +43,16 @@ import { GroupService } from 'app/services/group.service';
   encapsulation: ViewEncapsulation.None,
   imports: [MatIconModule, RouterLink, MatButtonModule, CdkScrollable, NgIf,
     AsyncPipe, NgForOf, CurrencyPipe, MatButtonModule, MatMenuModule,
-    FuseDrawerComponent, MatDividerModule, MatSidenavModule, NewGroupComponent,
-    EditGroupComponent],
+    FuseDrawerComponent, MatDividerModule, MatSidenavModule, NewAppComponent,
+    EditAppComponent],
 })
-export class GroupComponent {
+export class AppComponent {
 
   @ViewChild('addDrawer', { static: false }) addDrawer: FuseDrawerComponent;
-
-  public groups$;
-
-  drawerComponent: 'new-group' | 'edit-group';
+  @ViewChild('paginator') paginator: MatPaginator;
+  
+  apps$;
+  drawerComponent: 'new-app' | 'edit-app';
   configForm: UntypedFormGroup;
   selectedData: any;
   pageSize = 10; // Initial page size
@@ -62,7 +63,7 @@ export class GroupComponent {
    */
   constructor(private _fuseConfirmationService: FuseConfirmationService,
               private _formBuilder: UntypedFormBuilder,
-              private _groupService: GroupService
+              private _appService: AppService
   )
   {
   }
@@ -71,8 +72,8 @@ export class GroupComponent {
   {
       // Build the config form
       this.configForm = this._formBuilder.group({
-          title      : 'Xóa nhóm',
-          message    : 'Xóa nhóm này khỏi hệ thống? <span class="font-medium">Thao tác này không thể hoàn tác!</span>',
+          title      : 'Xóa ứng dụng',
+          message    : 'Xóa ứng dụng này khỏi hệ thống? <span class="font-medium">Thao tác này không thể hoàn tác!</span>',
           icon       : this._formBuilder.group({
               show : true,
               name : 'heroicons_outline:exclamation-triangle',
@@ -92,53 +93,61 @@ export class GroupComponent {
           dismissible: true,
       });
 
-      this.getGroups();
+      this.getApps();
   }
 
-  addGroup() {
-    this.drawerComponent = 'new-group';
+  addApp() {
+    this.drawerComponent = 'new-app';
     this.addDrawer.open();
   }
 
-  closeDrawer() {
-    this.addDrawer.close();
+  // we need this function to distroy the child component when drawer is closed
+  drawerOpenedChanged(isOpened) {
+    if (!isOpened) {
+      this.drawerComponent = null;
+    }
   }
 
-  editGroup(group: any) {
-    this.selectedData = group;
-    this.drawerComponent = 'edit-group';
+  editApp(app: any) {
+    console.log(app);
+    this.drawerComponent = 'edit-app';
     this.addDrawer.open();
+
+    // pass data to edit-app component
+    this.selectedData = app;
   }
 
-  deleteGroup(group: any) {
+  deleteApp(app): void 
+  {
       // Open the dialog and save the reference of it
       const dialogRef = this._fuseConfirmationService.open(this.configForm.value);
 
       // Subscribe to afterClosed from the dialog reference
       dialogRef.afterClosed().subscribe((result) =>
       {
+          console.log(result);
           if(result === 'confirmed') {
-            this._groupService.delete(group.id).subscribe(() => {
-              this.getGroups();
+            this._appService.delete(app.id).subscribe(() => {
+              this.getApps();
             });
           }
       });
   }
 
   // get data from api
-  getGroups() {
+  getApps() {
     const query = {
       pageNumber: this.pageNumber + 1,
       pageSize: this.pageSize
     };
-    this.groups$ = this._groupService.getAll(query).pipe(
+    this.apps$ = this._appService.getAll(query).pipe(
       map((data: any) => {
-          const groups: any[] = data.items.map((group, index: number) => ({
-              ...group,
+          const apps: any[] = data.items.map((app, index: number) => ({
+              ...app,
               stt: index + 1
           }));
           this.totalItems = data.count;
-          return { groups };
+          return { apps };
       })
     );
   }
@@ -146,19 +155,6 @@ export class GroupComponent {
   onPageChange(event): void {
     this.pageNumber = event.pageIndex;
     this.pageSize = event.pageSize;
-    this.getGroups();
-  }
-
-
-
-
-
-
-
-
-  drawerOpenedChanged(isOpened) {
-    if (!isOpened) {
-      this.drawerComponent = null;
-    }
+    this.getApps();
   }
 }

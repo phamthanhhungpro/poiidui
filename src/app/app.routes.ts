@@ -78,7 +78,8 @@ export const appRoutes: Route[] = [
             {path: 'tenant', loadChildren: () => import('app/modules/admin/tenant/tenant.routes')},
             {path: 'group', loadChildren: () => import('app/modules/admin/group/group.routes')},
             {path: 'user', loadChildren: () => import('app/modules/admin/user/user.routes')},
-            {path: 'app', loadChildren: () => import('app/modules/admin/app/app.routes')},
+            {path: 'app-ssa', loadChildren: () => import('app/modules/admin/app/app.routes')},
+            {path: 'app-admin', loadChildren: () => import('app/modules/admin/app-admin/app.routes')},
             {path: 'role', loadChildren: () => import('app/modules/admin/role/role.routes')},
         ]
     }

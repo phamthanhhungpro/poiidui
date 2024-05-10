@@ -3,6 +3,12 @@
     <div
         class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 pb-22 sm:pt-6 sm:pb-20 sm:px-10 bg-default dark:bg-transparent">
         <div class="flex-1 min-w-0">
+            <!-- Title -->
+            <div class="mt-2">
+                <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+                    Danh sách thành viên
+                </h2>
+            </div>
             <!-- Breadcrumbs -->
             <div>
                 <div class="hidden sm:flex flex-wrap items-center font-medium">
@@ -23,15 +29,9 @@
                     </a>
                 </div>
             </div>
-            <!-- Title -->
-            <div class="mt-2">
-                <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
-                    Danh sách thành viên
-                </h2>
-            </div>
         </div>
         <!-- Actions -->
-        <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
+        <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4" *ngIf="isAllowCRUD()">
             <button mat-flat-button [color]="'primary'" (click)="addUser()">
                 <mat-icon class="icon-size-4" [svgIcon]="'mat_outline:add'"></mat-icon>
                 <span class="ml-2">Thêm mới</span>
@@ -40,53 +40,46 @@
     </div>
 
     <!-- Main -->
-    <div class="flex-auto -mt-16 p-6 sm:p-10 rounded-t-2xl shadow overflow-y-auto bg-card" cdkScrollable>
+    <div class="flex flex-auto -mt-16 p-6 sm:p-10 overflow-hidden bg-card">
 
         <!-- CONTENT GOES HERE -->
-        <div
-            class="flex flex-auto h-400 min-h-400 max-h-400 border-2 border-dashed border-gray-300 rounded-2xl">
-            <div class="flex flex-col flex-auto sm:mb-18 overflow-hidden">
-                <ng-container *ngIf="(users$ | async) as data">
-                    <ng-container *ngIf="data.users.length; else nousers">
-                        <ng-container *ngFor="let user of data.users; let i = index; trackBy: trackByFn">
-                            <a class="z-10 flex items-center px-6 py-4 md:px-8 cursor-pointer border-b hover:bg-gray-100 dark:hover:bg-hover"
-                            >
-                                <div
-                                    class="flex flex-0 items-center justify-center w-10 h-10 rounded-full overflow-hidden">
-                                    <ng-container *ngIf="user.avatar">
-                                        <img class="object-cover w-full h-full" [src]="user.avatar" alt="user avatar" />
-                                    </ng-container>
-                                    <ng-container *ngIf="!user.avatar && user.name">
-                                        <div
-                                            class="flex items-center justify-center w-full h-full rounded-full text-lg uppercase bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
-                                            {{user.name.charAt(0)}}
-                                        </div>
-                                    </ng-container>
-                                </div>
-                                <div class="min-w-0 ml-4">
-                                    <div class="font-medium leading-5 truncate">{{user.fullName}}</div>
-                                    <div class="leading-5 truncate text-secondary">{{user.email}}</div>
-                                </div>
-                            </a>
-                        </ng-container>
-                        <mat-paginator #paginator
-                            class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
-                            [ngClass]="{'pointer-events-none': isLoading}" [length]="totalItems" [pageSize]="pageSize"
-                            [pageIndex]="pageNumber" [pageSizeOptions]="[5, 10, 25, 100]" [showFirstLastButtons]="true"
-                            (page)="onPageChange($event)">
-                        </mat-paginator>
+        <div class="flex flex-col flex-auto sm:mb-18 overflow-hidden sm:overflow-y-auto">
+            <ng-container *ngIf="(users$ | async) as data">
+                <ng-container *ngIf="data.users.length; else nousers">
+                    <ng-container *ngFor="let user of data.users; let i = index; trackBy: trackByFn">
+                        <a class="z-10 flex items-center px-6 py-4 md:px-8 cursor-pointer border-b hover:bg-gray-100 dark:hover:bg-hover">
+                            <div class="flex flex-0 items-center justify-center w-10 h-10 rounded-full overflow-hidden">
+                                <ng-container *ngIf="user.avatar">
+                                    <img class="object-cover w-full h-full" [src]="user.avatar" alt="user avatar" />
+                                </ng-container>
+                                <ng-container *ngIf="!user.avatar && user.name">
+                                    <div
+                                        class="flex items-center justify-center w-full h-full rounded-full text-lg uppercase bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                                        {{user.name.charAt(0)}}
+                                    </div>
+                                </ng-container>
+                            </div>
+                            <div class="min-w-0 ml-4">
+                                <div class="font-medium leading-5 truncate">{{user.fullName}}</div>
+                                <div class="leading-5 truncate text-secondary">{{user.email}}</div>
+                            </div>
+                        </a>
                     </ng-container>
+                    <mat-paginator #paginator
+                        class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+                        [ngClass]="{'pointer-events-none': isLoading}" [length]="totalItems" [pageSize]="pageSize"
+                        [pageIndex]="pageNumber" [pageSizeOptions]="[5, 10, 25, 100]" [showFirstLastButtons]="true"
+                        (page)="onPageChange($event)">
+                    </mat-paginator>
                 </ng-container>
+            </ng-container>
 
-                <ng-template #nousers>
-                    <div class="p-8 sm:p-16 border-t text-4xl font-semibold tracking-tight text-center">There are no
-                        users!</div>
-                </ng-template>
-
-            </div>
+            <ng-template #nousers>
+                <div class="p-8 sm:p-16 border-t text-4xl font-semibold tracking-tight text-center">There are no
+                    users!</div>
+            </ng-template>
 
         </div>
-
     </div>
 </div>
 
@@ -94,7 +87,7 @@
     [position]="'right'" [opened]="false" (openedChanged)="drawerOpenedChanged($event)" #addDrawer>
     <div class="flex flex-col w-full overflow-auto bg-card">
         <!-- New User -->
-        <ng-container *ngIf="drawerComponent === 'new-user'" >
+        <ng-container *ngIf="drawerComponent === 'new-user'">
             <app-new-user [drawer]="addDrawer" (onClosed)="getUsers()"></app-new-user>
         </ng-container>
         <!-- Edit User -->
