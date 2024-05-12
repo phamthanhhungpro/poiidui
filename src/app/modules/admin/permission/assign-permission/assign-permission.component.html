@@ -1,0 +1,80 @@
+<div class="w-full max-w-3xl">
+
+    <!-- Form -->
+    <form [formGroup]="notificationsForm">
+        <!-- Section -->
+        <div class="w-full text-xl">Chức năng </div>
+        <div class="grid grid-cols-1 gap-4 w-full mt-4">
+            <!-- Comments -->
+            <div class="flex items-center justify-between">
+                <div
+                    class="flex-auto leading-6 cursor-pointer"
+                    (click)="comments.toggle()">
+                    Thêm cơ quan
+                </div>
+                <mat-slide-toggle
+                    class="ml-2"
+                    [color]="'primary'"
+                    [formControlName]="'comments'"
+                    #comments>
+                </mat-slide-toggle>
+            </div>
+            <!-- Mention -->
+            <div class="flex items-center justify-between">
+                <div
+                    class="flex-auto leading-6 cursor-pointer"
+                    (click)="mention.toggle()">
+                    Sửa cơ quan
+                </div>
+                <mat-slide-toggle
+                    class="ml-2"
+                    [color]="'primary'"
+                    [formControlName]="'mention'"
+                    #mention>
+                </mat-slide-toggle>
+            </div>
+            <!-- Follow -->
+            <div class="flex items-center justify-between">
+                <div
+                    class="flex-auto leading-6 cursor-pointer"
+                    (click)="follow.toggle()">
+                    Xóa cơ quan
+                </div>
+                <mat-slide-toggle
+                    class="ml-2"
+                    [color]="'primary'"
+                    [formControlName]="'follow'"
+                    #follow>
+                </mat-slide-toggle>
+            </div>
+            <!-- Inquiry -->
+            <div class="flex items-center justify-between">
+                <div
+                    class="flex-auto leading-6 cursor-pointer"
+                    (click)="inquiry.toggle()">
+                    Đọc danh sách cơ quan
+                </div>
+                <mat-slide-toggle
+                    class="ml-2"
+                    [color]="'primary'"
+                    [formControlName]="'inquiry'"
+                    #inquiry>
+                </mat-slide-toggle>
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="my-10 border-t"></div>
+
+        <!-- Actions -->
+        <div class="flex items-center justify-end">
+            <button
+                class="ml-4"
+                mat-flat-button
+                type="button"
+                [color]="'primary'">Lưu
+            </button>
+        </div>
+    </form>
+
+</div>

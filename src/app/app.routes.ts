@@ -81,6 +81,10 @@ export const appRoutes: Route[] = [
             {path: 'app-ssa', loadChildren: () => import('app/modules/admin/app/app.routes')},
             {path: 'app-admin', loadChildren: () => import('app/modules/admin/app-admin/app.routes')},
             {path: 'role', loadChildren: () => import('app/modules/admin/role/role.routes')},
+
+            {path: 'function', loadChildren: () => import('app/modules/admin/function/function.routes')},
+            {path: 'permission', loadChildren: () => import('app/modules/admin/permission/permission.routes')},
+
         ]
     }
 ];

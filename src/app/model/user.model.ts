@@ -9,5 +9,6 @@ export class User {
     tenant: any;
     group: any;
     role: any;
+    roleId;
     apps: any[];
 }

@@ -1,14 +1,14 @@
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { AsyncPipe, CurrencyPipe, NgForOf, NgIf } from '@angular/common';
-import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { RouterLink } from '@angular/router';
 import { FuseDrawerComponent } from '@fuse/components/drawer';
-import { Observable, map } from 'rxjs';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import { Observable, Subject, map, takeUntil } from 'rxjs';
+import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { NewUserComponent } from './new-user/new-user.component';
 import { EditUserComponent } from './edit-user/edit-user.component';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
@@ -16,6 +16,7 @@ import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { UserApiService } from 'app/services/user.service';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { isAllowCRUD } from 'app/mock-api/common/user/roleHelper'
+import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
 
 @Component({
   selector: 'app-user',
@@ -29,7 +30,7 @@ import { isAllowCRUD } from 'app/mock-api/common/user/roleHelper'
 })
 export class UserComponent {
 
-  @ViewChild('addDrawer', { static: false }) addDrawer: FuseDrawerComponent;
+  @ViewChild('addDrawer', { static: false }) addDrawer: MatDrawer;
   @ViewChild('paginator') paginator: MatPaginator;
 
 
@@ -42,18 +43,24 @@ export class UserComponent {
   pageNumber = 0; // Initial page index
   totalItems = 0; // Total items
 
-  selectedContact: any;
   userInfo = {
     role: localStorage.getItem('role'),
     tenantId: localStorage.getItem('tenantId'),
     userId: localStorage.getItem('userId')
   }
+
+  drawerMode: 'side' | 'over';
+  private _unsubscribeAll: Subject<any> = new Subject<any>();
+
   /**
    * Constructor
    */
   constructor(private _fuseConfirmationService: FuseConfirmationService,
     private _formBuilder: UntypedFormBuilder,
-    private _userService: UserApiService
+    private _userService: UserApiService,
+    private _fuseMediaWatcherService: FuseMediaWatcherService,
+    private _changeDetectorRef: ChangeDetectorRef,
+
   ) {
   }
 
@@ -82,6 +89,25 @@ export class UserComponent {
       }),
       dismissible: true,
     });
+
+            // Subscribe to media changes
+            this._fuseMediaWatcherService.onMediaChange$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe(({matchingAliases}) =>
+            {
+                // Set the drawerMode if the given breakpoint is active
+                if ( matchingAliases.includes('lg') )
+                {
+                    this.drawerMode = 'over';
+                }
+                else
+                {
+                    this.drawerMode = 'over';
+                }
+
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
   }
 
   addUser() {
@@ -96,6 +122,8 @@ export class UserComponent {
   editUser(user: any) {
     console.log(user);
     this.drawerComponent = 'edit-user';
+    this.selectedData = user;
+
     this.addDrawer.open();
   }
 
@@ -142,6 +170,7 @@ export class UserComponent {
 
   // we need this function to distroy the child component when drawer is closed
   drawerOpenedChanged(isOpened) {
+    console.log(isOpened);
     if (!isOpened) {
       this.drawerComponent = null;
     }

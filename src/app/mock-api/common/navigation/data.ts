@@ -1,6 +1,7 @@
 /* eslint-disable */
 import { FuseNavigationItem } from '@fuse/components/navigation';
 import { Constants } from '../constants';
+import { isAllowSetPermission } from '../user/roleHelper';
 
 export const defaultNavigation: FuseNavigationItem[] = [
     {
@@ -88,6 +89,42 @@ export const defaultNavigation: FuseNavigationItem[] = [
             }
         ]
     },
+    {
+        id: 'permission',
+        title: 'Phân quyền người dùng',
+        type: 'group',
+        icon: 'heroicons_outline:home',
+        children: [
+            {
+                id: 'function',
+                title: 'Chức năng',
+                type: 'basic',
+                icon: 'mat_solid:functions',
+                link: '/function',
+                hidden(item) {
+                    // always hide this item if role is not SSA
+                    if (localStorage.getItem('role') !== Constants.ROLE_SSA) {
+                        return true;
+                    }
+                    return false;
+                },
+            },
+            {
+                id: 'assign-permission',
+                title: 'Phân quyền chức năng',
+                type: 'basic',
+                icon: 'mat_solid:verified_user',
+                link: '/permission',
+                hidden(item) {
+                    if (!isAllowSetPermission(localStorage.getItem('role'))) {
+                        return true;
+                    }
+                    return false;
+                },
+            },
+
+        ]
+    },
 ];
 export const compactNavigation: FuseNavigationItem[] = [
     {
@@ -102,6 +139,15 @@ export const futuristicNavigation: FuseNavigationItem[] = [
     {
         id: 'id',
         title: 'ID Management',
+        type: 'group',
+        icon: 'heroicons_outline:home',
+        children: [
+
+        ]
+    },
+    {
+        id: 'permission',
+        title: 'Phân quyền người dùng',
         type: 'group',
         icon: 'heroicons_outline:home',
         children: [

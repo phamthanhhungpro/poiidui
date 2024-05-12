@@ -20,3 +20,7 @@ export function isMemberRole(role) {
 export function isAllowCRUD(role) {
     return isSsaRole(role) || isOWnerRole(role) || isAdminRole(role) || isAppAdminRole(role);
 }
+
+export function isAllowSetPermission(role) {
+    return isSsaRole(role) || isOWnerRole(role) || isAppAdminRole(role);
+}

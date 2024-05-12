@@ -1,4 +1,4 @@
-<div class="absolute inset-0 flex flex-col min-w-0 overflow-hidden">
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
     <!-- Header -->
     <div
         class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 pb-22 sm:pt-6 sm:pb-20 sm:px-10 bg-default dark:bg-transparent">
@@ -59,9 +59,30 @@
                                     </div>
                                 </ng-container>
                             </div>
-                            <div class="min-w-0 ml-4">
+                            <div class="min-w-60 max-w-60 ml-4" (click)="editUser(user)">
                                 <div class="font-medium leading-5 truncate">{{user.fullName}}</div>
                                 <div class="leading-5 truncate text-secondary">{{user.email}}</div>
+                                <div class="leading-5 truncate text-secondary">{{'@' +user.userName}} - {{user.phone}}</div>
+                            </div>
+                            <div class="min-w-80 max-w-80 ml-4">
+                                <div class="leading-5 truncate text-secondary text-warn-800">{{user.role}}</div>
+                                <div class="font-medium leading-5 truncate">{{user.tenantName}}</div>
+                            </div>
+                            <div class="flex-grow"></div>
+                            <div class="min-w-0 max-w-80 ml-4">
+                                <button mat-icon-button [matMenuTriggerFor]="menu">
+                                    <mat-icon class="icon-size-4" [svgIcon]="'mat_solid:more_vert'"></mat-icon>
+                                </button>
+                                <mat-menu #menu="matMenu">
+                                    <button (click)="editUser(user)" mat-menu-item>
+                                        <mat-icon class="icon-size-4" [svgIcon]="'heroicons_solid:pencil'"></mat-icon>
+                                        <span>Sửa thông tin</span>
+                                    </button>
+                                    <button  (click)="deleteUser(user)" mat-menu-item>
+                                        <mat-icon class="icon-size-4" [svgIcon]="'heroicons_solid:trash'"></mat-icon>
+                                        <span>Xóa thành viên</span>
+                                    </button>
+                                </mat-menu>
                             </div>
                         </a>
                     </ng-container>
@@ -92,7 +113,7 @@
         </ng-container>
         <!-- Edit User -->
         <ng-container *ngIf="drawerComponent === 'edit-user'">
-            <app-edit-user [drawer]="addDrawer" [user]="selecteduser"></app-edit-user>
+            <app-edit-user [drawer]="addDrawer" [data]="selectedData" (onClosed)="getUsers()"></app-edit-user>
         </ng-container>
 
     </div>
