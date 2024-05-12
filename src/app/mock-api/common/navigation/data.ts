@@ -150,6 +150,12 @@ export const futuristicNavigation: FuseNavigationItem[] = [
         title: 'Phân quyền người dùng',
         type: 'group',
         icon: 'heroicons_outline:home',
+        hidden(item) {
+            if (!isAllowSetPermission(localStorage.getItem('role'))) {
+                return true;
+            }
+            return false;
+        },
         children: [
 
         ]
