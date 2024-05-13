@@ -7,6 +7,7 @@ import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
 import { RoleService } from 'app/services/role.service';
 import { Subject, takeUntil } from 'rxjs';
 import { AssignPermissionComponent } from './assign-permission/assign-permission.component';
+import {MatTabsModule} from '@angular/material/tabs';
 
 @Component({
   selector: 'app-permission',
@@ -15,7 +16,7 @@ import { AssignPermissionComponent } from './assign-permission/assign-permission
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [MatSidenavModule, MatButtonModule, MatIconModule, NgForOf, NgClass, NgSwitch, NgSwitchCase, AsyncPipe,
-    NgIf, AssignPermissionComponent
+    NgIf, AssignPermissionComponent, MatTabsModule
   ],
 })
 export class PermissionComponent implements OnInit, OnDestroy {

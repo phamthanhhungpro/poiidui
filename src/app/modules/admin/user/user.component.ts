@@ -90,24 +90,21 @@ export class UserComponent {
       dismissible: true,
     });
 
-            // Subscribe to media changes
-            this._fuseMediaWatcherService.onMediaChange$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe(({matchingAliases}) =>
-            {
-                // Set the drawerMode if the given breakpoint is active
-                if ( matchingAliases.includes('lg') )
-                {
-                    this.drawerMode = 'over';
-                }
-                else
-                {
-                    this.drawerMode = 'over';
-                }
+    // Subscribe to media changes
+    this._fuseMediaWatcherService.onMediaChange$
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(({ matchingAliases }) => {
+        // Set the drawerMode if the given breakpoint is active
+        if (matchingAliases.includes('lg')) {
+          this.drawerMode = 'over';
+        }
+        else {
+          this.drawerMode = 'over';
+        }
 
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
+        // Mark for check
+        this._changeDetectorRef.markForCheck();
+      });
   }
 
   addUser() {
@@ -120,7 +117,6 @@ export class UserComponent {
   }
 
   editUser(user: any) {
-    console.log(user);
     this.drawerComponent = 'edit-user';
     this.selectedData = user;
 
@@ -128,21 +124,16 @@ export class UserComponent {
   }
 
   deleteUser(user: any) {
-    this.openConfirmationDialog();
-  }
-
-  openConfirmationDialog(): void {
-    // Open the dialog and save the reference of it
     const dialogRef = this._fuseConfirmationService.open(this.configForm.value);
-
     // Subscribe to afterClosed from the dialog reference
     dialogRef.afterClosed().subscribe((result) => {
-      console.log(result);
       if (result === 'confirmed') {
-        console.log('Delete');
-      }
+        this._userService.delete(user.id).subscribe(() => {
+          this.getUsers();
+        });      }
     });
   }
+
 
   // get data from api
   getUsers() {

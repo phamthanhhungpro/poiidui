@@ -1,67 +1,24 @@
 <div class="w-full max-w-3xl">
 
     <!-- Form -->
-    <form [formGroup]="notificationsForm">
         <!-- Section -->
-        <div class="w-full text-xl">Chức năng </div>
-        <div class="grid grid-cols-1 gap-4 w-full mt-4">
-            <!-- Comments -->
-            <div class="flex items-center justify-between">
+        <div class="grid grid-cols-1 gap-4 w-full mt-4" *ngIf="items | async as itemsData; else loading">
+            <div class="flex items-center justify-between" *ngFor="let item of itemsData">
                 <div
-                    class="flex-auto leading-6 cursor-pointer"
-                    (click)="comments.toggle()">
-                    Thêm cơ quan
+                    class="flex-auto leading-6 font-medium cursor-pointer"
+                    (click)="func.toggle()">
+                    {{item.name}}
                 </div>
-                <mat-slide-toggle
+                <mat-slide-toggle [checked]="item.checked" (change)="toggleChecked(item)"
                     class="ml-2"
                     [color]="'primary'"
-                    [formControlName]="'comments'"
-                    #comments>
-                </mat-slide-toggle>
-            </div>
-            <!-- Mention -->
-            <div class="flex items-center justify-between">
-                <div
-                    class="flex-auto leading-6 cursor-pointer"
-                    (click)="mention.toggle()">
-                    Sửa cơ quan
-                </div>
-                <mat-slide-toggle
-                    class="ml-2"
-                    [color]="'primary'"
-                    [formControlName]="'mention'"
-                    #mention>
-                </mat-slide-toggle>
-            </div>
-            <!-- Follow -->
-            <div class="flex items-center justify-between">
-                <div
-                    class="flex-auto leading-6 cursor-pointer"
-                    (click)="follow.toggle()">
-                    Xóa cơ quan
-                </div>
-                <mat-slide-toggle
-                    class="ml-2"
-                    [color]="'primary'"
-                    [formControlName]="'follow'"
-                    #follow>
-                </mat-slide-toggle>
-            </div>
-            <!-- Inquiry -->
-            <div class="flex items-center justify-between">
-                <div
-                    class="flex-auto leading-6 cursor-pointer"
-                    (click)="inquiry.toggle()">
-                    Đọc danh sách cơ quan
-                </div>
-                <mat-slide-toggle
-                    class="ml-2"
-                    [color]="'primary'"
-                    [formControlName]="'inquiry'"
-                    #inquiry>
+                    #func>
                 </mat-slide-toggle>
             </div>
         </div>
+        <ng-template #loading>
+            <div>Loading...</div>
+          </ng-template>
 
         <!-- Divider -->
         <div class="my-10 border-t"></div>
@@ -72,9 +29,11 @@
                 class="ml-4"
                 mat-flat-button
                 type="button"
-                [color]="'primary'">Lưu
+                [color]="'primary'"
+                (click)="save()"
+                >Lưu
             </button>
         </div>
-    </form>
+
 
 </div>
