@@ -47,7 +47,8 @@
             <ng-container *ngIf="(users$ | async) as data">
                 <ng-container *ngIf="data.users.length; else nousers">
                     <ng-container *ngFor="let user of data.users; let i = index; trackBy: trackByFn">
-                        <a class="z-10 flex items-center px-6 py-4 md:px-8 cursor-pointer border-b hover:bg-gray-100 dark:hover:bg-hover">
+                        <a
+                            class="z-10 flex items-center px-6 py-4 md:px-8 cursor-pointer border-b hover:bg-gray-100 dark:hover:bg-hover">
                             <div class="flex flex-0 items-center justify-center w-10 h-10 rounded-full overflow-hidden">
                                 <ng-container *ngIf="user.avatar">
                                     <img class="object-cover w-full h-full" [src]="user.avatar" alt="user avatar" />
@@ -62,11 +63,17 @@
                             <div class="min-w-60 max-w-60 ml-4" (click)="editUser(user)">
                                 <div class="font-medium leading-5 truncate">{{user.fullName}}</div>
                                 <div class="leading-5 truncate text-secondary">{{user.email}}</div>
-                                <div class="leading-5 truncate text-secondary">{{'@' +user.userName}} - {{user.phone}}</div>
+                                <div class="leading-5 truncate text-secondary">{{'@' +user.userName}} - {{user.phone}}
+                                </div>
                             </div>
                             <div class="min-w-80 max-w-80 ml-4">
                                 <div class="leading-5 truncate text-secondary text-warn-800">{{user.role}}</div>
                                 <div class="font-medium leading-5 truncate">{{user.tenantName}}</div>
+                            </div>
+                            <div class="min-w-80 max-w-80 ml-4">
+                                <div *ngIf="!user.isActive" class="leading-6 line-through font-medium text-red-500">Vô
+                                    hiệu hóa</div>
+                                <div *ngIf="user.isActive" class="leading-6 font-medium text-green-500">Hoạt động</div>
                             </div>
                             <div class="flex-grow"></div>
                             <div class="min-w-0 max-w-80 ml-4">
@@ -78,9 +85,30 @@
                                         <mat-icon class="icon-size-4" [svgIcon]="'heroicons_solid:pencil'"></mat-icon>
                                         <span>Sửa thông tin</span>
                                     </button>
-                                    <button  (click)="deleteUser(user)" mat-menu-item>
+                                    <button (click)="deleteUser(user)" mat-menu-item>
                                         <mat-icon class="icon-size-4" [svgIcon]="'heroicons_solid:trash'"></mat-icon>
                                         <span>Xóa thành viên</span>
+                                    </button>
+                                    <button (click)="inActive(user)" mat-menu-item>
+                                        <mat-icon class="icon-size-4"
+                                            [svgIcon]="'heroicons_outline:x-circle'"></mat-icon>
+                                        <span>Active/Inactive</span>
+                                    </button>
+                                    <button (click)="addManager(user)" mat-menu-item>
+                                        <mat-icon class="icon-size-4"
+                                            [svgIcon]="'mat_outline:manage_accounts'"></mat-icon>
+                                        <span>Chỉnh sửa người quản lý trực tiếp</span>
+                                    </button>
+                                    <!-- Chỉ role owner nhìn thấy menu -->
+                                    <button (click)="addToAdmin(user)" mat-menu-item *ngIf="isAllowSetRole()">
+                                        <mat-icon class="icon-size-4"
+                                            [svgIcon]="'mat_outline:manage_accounts'"></mat-icon>
+                                        <span>Chọn làm quản lý</span>
+                                    </button>
+                                    <button (click)="addToOwner(user)" mat-menu-item *ngIf="isAllowSetRole()">
+                                        <mat-icon class="icon-size-4"
+                                            [svgIcon]="'mat_outline:manage_accounts'"></mat-icon>
+                                        <span>Chọn làm quản lý cấp cao</span>
                                     </button>
                                 </mat-menu>
                             </div>
@@ -116,5 +144,9 @@
             <app-edit-user [drawer]="addDrawer" [data]="selectedData" (onClosed)="getUsers()"></app-edit-user>
         </ng-container>
 
+        <!-- add manager -->
+        <ng-container *ngIf="drawerComponent === 'add-manager'">
+            <app-add-manager [drawer]="addDrawer" [data]="selectedData" (onClosed)="getUsers()"></app-add-manager>
+        </ng-container>
     </div>
 </fuse-drawer>

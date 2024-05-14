@@ -15,8 +15,11 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { UserApiService } from 'app/services/user.service';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { isAllowCRUD } from 'app/mock-api/common/user/roleHelper'
+import { isAllowCRUD, isOWnerRole, isSsaRole } from 'app/mock-api/common/user/roleHelper'
 import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { AddManagerComponent } from './add-manager/add-manager.component';
+import { Constants } from 'app/mock-api/common/constants';
 
 @Component({
   selector: 'app-user',
@@ -26,7 +29,7 @@ import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
   imports: [MatIconModule, RouterLink, MatButtonModule, CdkScrollable, NgIf,
     AsyncPipe, NgForOf, CurrencyPipe, MatButtonModule, MatMenuModule,
     FuseDrawerComponent, MatDividerModule, MatSidenavModule, NewUserComponent,
-    EditUserComponent, MatPaginatorModule],
+    EditUserComponent, MatPaginatorModule, AddManagerComponent],
 })
 export class UserComponent {
 
@@ -36,7 +39,7 @@ export class UserComponent {
 
   public users$;
 
-  drawerComponent: 'new-user' | 'edit-user';
+  drawerComponent: 'new-user' | 'edit-user' | 'add-manager';
   configForm: UntypedFormGroup;
   selectedData: any;
   pageSize = 25; // Initial page size
@@ -60,6 +63,7 @@ export class UserComponent {
     private _userService: UserApiService,
     private _fuseMediaWatcherService: FuseMediaWatcherService,
     private _changeDetectorRef: ChangeDetectorRef,
+    private _snackBar: MatSnackBar,
 
   ) {
   }
@@ -130,11 +134,33 @@ export class UserComponent {
       if (result === 'confirmed') {
         this._userService.delete(user.id).subscribe(() => {
           this.getUsers();
-        });      }
+        });
+      }
     });
   }
 
+  inActive(user) {
+    var isActive = !user.isActive;
+    this._userService.update(user.id, { isActive: isActive }).subscribe(
+      (res) => {
+        this.openSnackBar('Thao tác thành công', 'Đóng');
+        this.getUsers();
+      },
+      (error) => {
+        // Handle error if observable emits an error
+        console.error('Error:', error);
+        // You can also display an error message to the user if needed
+        this.openSnackBar('Có lỗi xảy ra khi thực hiện thao tác', 'Đóng');
+      }
+    );
+  }
 
+  addManager(user) {
+    this.drawerComponent = 'add-manager';
+    this.selectedData = user;
+
+    this.addDrawer.open();
+  }
   // get data from api
   getUsers() {
     const query = {
@@ -169,5 +195,43 @@ export class UserComponent {
 
   isAllowCRUD() {
     return isAllowCRUD(this.userInfo.role);
+  }
+
+  isAllowSetRole() {
+    return isOWnerRole(this.userInfo.role) || isSsaRole(this.userInfo.role);
+  }
+  // snackbar
+  openSnackBar(message: string, action: string) {
+    this._snackBar.open(message, action, { duration: 2000 });
+  }
+
+  addToAdmin(user) {
+    this._userService.update(user.id, { roleCode: Constants.ROLE_ADMIN, isActive: user.isActive }).subscribe(
+      (res) => {
+        this.openSnackBar('Thao tác thành công', 'Đóng');
+        this.getUsers();
+      },
+      (error) => {
+        // Handle error if observable emits an error
+        console.error('Error:', error);
+        // You can also display an error message to the user if needed
+        this.openSnackBar('Có lỗi xảy ra khi thực hiện thao tác', 'Đóng');
+      }
+    );
+  }
+
+  addToOwner(user) {
+    this._userService.update(user.id, { roleCode: Constants.ROLE_ADMIN, isActive: user.isActive }).subscribe(
+      (res) => {
+        this.openSnackBar('Thao tác thành công', 'Đóng');
+        this.getUsers();
+      },
+      (error) => {
+        // Handle error if observable emits an error
+        console.error('Error:', error);
+        // You can also display an error message to the user if needed
+        this.openSnackBar('Có lỗi xảy ra khi thực hiện thao tác', 'Đóng');
+      }
+    );
   }
 }

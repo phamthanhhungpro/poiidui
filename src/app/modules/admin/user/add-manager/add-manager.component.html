@@ -1,0 +1,54 @@
+<div class="flex flex-col flex-auto h-full overflow-hidden bg-card dark:bg-default">
+
+    <!-- Header -->
+    <div class="flex flex-0 items-center justify-between h-18 -mb-px px-6 bg-gray-50 dark:bg-transparent">
+
+        <div class="ml-2 text-2xl font-semibold">Chỉnh sửa người quản lý trực tiếp</div>
+
+        <div class="flex items-center">
+            <!-- More menu -->
+            <button mat-flat-button [color]="'primary'" (click)="save()">
+                Lưu
+            </button>
+            <button class="px-6 ml-3" mat-button (click)="cancelEdit()">
+                Hủy
+            </button>
+        </div>
+
+    </div>
+    <mat-divider class="mb-4"></mat-divider>
+    <div class="flex flex-col gt-xs:flex-row gt-xs:items-start overflow-y-auto p-6 h-180 min-h-180 max-h-180"
+        cdkScrollable>
+        <form [formGroup]="addManagerForm">
+            <div class="flex">
+                <mat-form-field class="flex-auto">
+                    <mat-label>Họ và tên</mat-label>
+                    <input matInput [placeholder]="'Họ và tên'" [formControlName]="'fullName'" readonly>
+                </mat-form-field>
+            </div>
+            <div class="flex">
+                <mat-form-field class="flex-auto">
+                    <mat-label>Người quản lí trực tiếp</mat-label>
+                    <input matInput [placeholder]="'Người quản lí trực tiếp'" [formControlName]="'searchManager'"
+                        [matAutocomplete]="auto" (keyup.enter)="searchUser()">
+                    <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete"
+                        (optionSelected)="onOptionSelected($event)">
+                        @for (option of filteredOptions | async; track option) {
+                        <mat-option [value]="option">{{option.fullName}}</mat-option>
+                        }
+                    </mat-autocomplete>
+                </mat-form-field>
+            </div>
+        </form>
+        <mat-list>
+            @for (user of listManager; track user) {
+            <mat-list-item>
+                <mat-icon class="text-red-500" matListItemIcon svgIcon="feather:x" (click)="removeFromList(user)"></mat-icon>
+                <div matListItemTitle>{{user.surName}} {{user.name}}</div>
+                <div matListItemLine>{{user.email}}</div>
+            </mat-list-item>
+            }
+        </mat-list>
+    </div>
+
+</div>
