@@ -94,7 +94,7 @@
                                             [svgIcon]="'heroicons_outline:x-circle'"></mat-icon>
                                         <span>Active/Inactive</span>
                                     </button>
-                                    <button (click)="addManager(user)" mat-menu-item>
+                                    <button (click)="addManager(user)" mat-menu-item *ngIf="isAllowCRUD()">
                                         <mat-icon class="icon-size-4"
                                             [svgIcon]="'mat_outline:manage_accounts'"></mat-icon>
                                         <span>Chỉnh sửa người quản lý trực tiếp</span>
