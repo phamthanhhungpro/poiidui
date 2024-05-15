@@ -54,8 +54,8 @@
                 <!-- Load settings panel -->
                 <div class="mt-2">
                     <ng-container *ngIf="selectedPanel">
-                        <mat-tab-group>
-                            <mat-tab label="Chức năng">
+                        <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+                            <mat-tab label="CHỨC NĂNG">
                                 <app-assign-permission [data]="selectedRole"></app-assign-permission>
                             </mat-tab>
                           </mat-tab-group>
