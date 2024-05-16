@@ -20,6 +20,7 @@ import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AddManagerComponent } from './add-manager/add-manager.component';
 import { Constants } from 'app/mock-api/common/constants';
+import { environment } from 'environments/environment';
 
 @Component({
   selector: 'app-user',
@@ -38,7 +39,7 @@ export class UserComponent {
 
 
   public users$;
-
+  domain = environment.idApiUrlWithOutEndding;
   drawerComponent: 'new-user' | 'edit-user' | 'add-manager';
   configForm: UntypedFormGroup;
   selectedData: any;

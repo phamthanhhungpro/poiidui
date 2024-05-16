@@ -138,7 +138,11 @@ export class NewUserComponent {
   // get list tenant to populate dropdown
   getTenant(): void {
     this._tenantService.getAllNoPaging().subscribe(res => {
+      console.log(res);
       this.tenants = res;
+      if(this.tenants.length === 1) {
+        this.addUserForm.get('tenantId')!.setValue(this.tenants[0].id);
+      }
     });
   }
 
