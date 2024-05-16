@@ -76,6 +76,13 @@
                     <div><input type="file" (change)="onFileSelected($event)"></div>
                 </div>
             </div>
+            <div class="flex">
+                <mat-slide-toggle
+                 class="flex-auto mb-4 mt-1"
+                 [color]="'primary'"
+                 labelPosition="before"
+                 [formControlName]="'isActive'"><span class="font-medium">Kích hoạt</span></mat-slide-toggle>
+            </div>
         </form>
         <div class="flex-auto mt-2">
             <mat-label class="font-medium">Chọn ứng dụng</mat-label>

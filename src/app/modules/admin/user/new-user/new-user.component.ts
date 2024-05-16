@@ -17,13 +17,15 @@ import { CdkScrollable } from '@angular/cdk/scrolling';
 import { AuthService } from 'app/core/auth/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TenantService } from 'app/services/tenant.service';
+import { Constants } from 'app/mock-api/common/constants';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-new-user',
   standalone: true,
   imports: [MatButtonModule, MatIconModule, NgIf, NgFor, MatDividerModule,
     FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule,
-    MatFormFieldModule, MatCheckboxModule, MatSelectModule,CdkScrollable
+    MatFormFieldModule, MatCheckboxModule, MatSelectModule,CdkScrollable, MatSlideToggleModule
   ],
   templateUrl: './new-user.component.html'
 })
@@ -42,6 +44,12 @@ export class NewUserComponent {
     subtasks: [
     ],
   };
+
+  userInfo = {
+    role: localStorage.getItem('role'),
+    tenantId: localStorage.getItem('tenantId'),
+    userId: localStorage.getItem('userId')
+  }
 
   /**
    *
@@ -63,6 +71,7 @@ export class NewUserComponent {
       tenantId: ['', Validators.required],
       roleId: ['', Validators.required],
       avatar: [''],
+      isActive: [true]
     });
   }
 
@@ -114,10 +123,17 @@ export class NewUserComponent {
   // get list role to populate dropdown
   getRoles(): void {
     this._roleService.getAllNoPaging().subscribe(res => {
+
       this.roles = res;
+      if (this.userInfo.role === Constants.ROLE_ADMIN) {
+        this.roles = res.filter((role: any) => role.code === Constants.ROLE_MEMBER);
+      }
+
+      if (this.userInfo.role === Constants.ROLE_APPADMIN) {
+        this.roles = res.filter((role: any) => role.code === Constants.ROLE_MEMBER || role.code === Constants.ROLE_ADMIN);
+      }
     });
   }
-
   
   // get list tenant to populate dropdown
   getTenant(): void {

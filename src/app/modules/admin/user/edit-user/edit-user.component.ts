@@ -18,13 +18,15 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TenantService } from 'app/services/tenant.service';
 import { isSsaRole } from 'app/mock-api/common/user/roleHelper';
+import { Constants } from 'app/mock-api/common/constants';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-edit-user',
   standalone: true,
   imports: [MatButtonModule, MatIconModule, NgIf, NgFor, MatDividerModule,
     FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule,
-    MatFormFieldModule, MatCheckboxModule, MatSelectModule, CdkScrollable
+    MatFormFieldModule, MatCheckboxModule, MatSelectModule, CdkScrollable, MatSlideToggleModule
   ],
   templateUrl: './edit-user.component.html'
 })
@@ -43,6 +45,12 @@ export class EditUserComponent {
     color: 'primary',
     subtasks: [
     ],
+  };
+
+  userInfo = {
+    role: localStorage.getItem('role'),
+    tenantId: localStorage.getItem('tenantId'),
+    userId: localStorage.getItem('userId')
   };
 
   /**
@@ -65,6 +73,7 @@ export class EditUserComponent {
       tenantId: ['', Validators.required],
       roleId: ['', Validators.required],
       avatar: [''],
+      isActive: ['']
     });
   }
 
@@ -120,7 +129,16 @@ export class EditUserComponent {
   // get list role to populate dropdown
   getRoles(): void {
     this._roleService.getAllNoPaging().subscribe(res => {
+
       this.roles = res;
+      if (this.userInfo.role === Constants.ROLE_ADMIN) {
+        this.roles = res.filter((role: any) => role.code === Constants.ROLE_MEMBER);
+      }
+
+      if (this.userInfo.role === Constants.ROLE_APPADMIN) {
+        this.roles = res.filter((role: any) => role.code === Constants.ROLE_MEMBER || role.code === Constants.ROLE_ADMIN);
+      }
+
     });
   }
 
