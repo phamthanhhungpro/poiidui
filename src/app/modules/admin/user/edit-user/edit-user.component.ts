@@ -26,7 +26,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
   standalone: true,
   imports: [MatButtonModule, MatIconModule, NgIf, NgFor, MatDividerModule,
     FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule,
-    MatFormFieldModule, MatCheckboxModule, MatSelectModule, CdkScrollable, MatSlideToggleModule
+    MatCheckboxModule, MatSelectModule, CdkScrollable, MatSlideToggleModule
   ],
   templateUrl: './edit-user.component.html'
 })

@@ -1,0 +1,136 @@
+<div class="flex flex-col w-full min-w-0 sm:absolute sm:inset-0 sm:overflow-hidden">
+    <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+        <mat-tab label="THÔNG TIN CƠ BẢN">
+            <div
+                class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 bg-default dark:bg-transparent">
+                <div class="flex-1 min-w-0">
+                    <!-- Title -->
+                    <div class="mt-2">
+                        <h4 class="text-2xl md:text-3xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+                            Thông tin cơ bản của người dùng
+                        </h4>
+                    </div>
+                </div>
+                <!-- Actions -->
+                <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
+                    <button mat-flat-button [color]="'primary'" (click)="save()">
+                        <mat-icon class="icon-size-4" [svgIcon]="'mat_outline:save'"></mat-icon>
+                        <span class="ml-2">Lưu</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:items-start overflow-y-auto p-1 h-180 min-h-180 max-h-180"
+                cdkScrollable>
+                <form [formGroup]="profileForm" class="w-full">
+                    <div class="flex flex-wrap">
+                        <!-- First Column -->
+                        <div class="w-full sm:w-1/2 p-2">
+                            <div class="flex">
+                                <mat-form-field class="flex-auto w-full">
+                                    <mat-label class="font-medium">Họ và tên đệm</mat-label>
+                                    <input matInput placeholder="Họ và tên đệm" formControlName="surName">
+                                </mat-form-field>
+                            </div>
+                            <div class="flex">
+                                <mat-form-field class="flex-auto w-full">
+                                    <mat-label class="font-medium">Tên</mat-label>
+                                    <input matInput placeholder="Tên" formControlName="name">
+                                </mat-form-field>
+                            </div>
+                            <div class="flex">
+                                <mat-form-field class="flex-auto w-full">
+                                    <mat-label>Địa chỉ Email</mat-label>
+                                    <input matInput placeholder="Địa chỉ email" formControlName="email" readonly>
+                                </mat-form-field>
+                            </div>
+                            <div class="flex">
+                                <mat-form-field class="flex-auto w-full">
+                                    <mat-label>Tên người dùng</mat-label>
+                                    <input matInput placeholder="Tên người dùng" formControlName="userName" readonly>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <!-- Second Column -->
+                        <div class="w-full sm:w-1/2 p-2">
+                            <div class="flex">
+                                <mat-form-field class="flex-auto w-full">
+                                    <mat-label>Số điện thoại</mat-label>
+                                    <input matInput placeholder="Số điện thoại" formControlName="phone">
+                                </mat-form-field>
+                            </div>
+                            <div class="flex">
+                                <mat-form-field class="flex-auto w-full">
+                                    <mat-label>Cơ quan</mat-label>
+                                    <input matInput placeholder="Cơ quan" formControlName="tenantName" readonly>
+                                </mat-form-field>
+                            </div>
+                            <div class="flex">
+                                <mat-form-field class="flex-auto w-full">
+                                    <mat-label>Vai trò</mat-label>
+                                    <input matInput placeholder="Vai trò" formControlName="roleName" readonly>
+                                </mat-form-field>
+                            </div>
+                            <div class="mb-4">
+                                <p class="font-medium">Ảnh đại diện</p>
+                                <div class="custom-image mt-2 mb-2">
+                                    <img *ngIf="selectedFile" [src]="selectedFileURL" alt="Selected Image">
+                                </div>
+                                <div>
+                                    <input type="file" (change)="onFileSelected($event)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </mat-tab>
+        <mat-tab label="BẢO MẬT">
+            <div
+                class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 bg-default dark:bg-transparent">
+                <div class="flex-1 min-w-0">
+                    <!-- Title -->
+                    <div class="mt-2">
+                        <h4 class="text-2xl md:text-3xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+                            Thay đổi mật khẩu
+                        </h4>
+                    </div>
+                </div>
+                <!-- Actions -->
+                <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
+                    <button mat-flat-button [color]="'primary'" (click)="save()">
+                        <mat-icon class="icon-size-4" [svgIcon]="'mat_outline:save'"></mat-icon>
+                        <span class="ml-2">Lưu</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:items-start overflow-y-auto p-1 h-180 min-h-180 max-h-180"
+                cdkScrollable>
+                <form [formGroup]="changePassForm" class="w-full">
+                    <div class="flex flex-wrap">
+                        <!-- First Column -->
+                        <div class="w-full sm:w-1/2 p-2">
+                            <div class="flex">
+                                <mat-form-field class="flex-auto w-full">
+                                    <mat-label class="font-medium">Nhập mật khẩu mới</mat-label>
+                                    <input matInput placeholder="Mật khẩu cần dài hơn 8 ký tự, bao gồm chữ hoa, thường và kí tự đặc biệt" formControlName="newPass">
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <!-- Second Column -->
+                        <div class="w-full sm:w-1/2 p-2">
+                            <div class="flex">
+                                <mat-form-field class="flex-auto w-full">
+                                    <mat-label>Nhập lại mật khẩu mới</mat-label>
+                                    <input matInput placeholder="Mật khẩu cần dài hơn 8 ký tự, bao gồm chữ hoa, thường và kí tự đặc biệt" formControlName="reNewPass">
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+</div>

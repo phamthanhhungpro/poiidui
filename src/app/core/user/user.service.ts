@@ -1,8 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { User } from 'app/core/user/user.types';
 import { environment } from 'environments/environment';
-import { map, Observable, ReplaySubject, tap } from 'rxjs';
+import { catchError, map, Observable, ReplaySubject, tap, throwError } from 'rxjs';
 const authUrl = environment.idApiUrl + 'auth';
 
 @Injectable({providedIn: 'root'})
@@ -45,6 +45,17 @@ export class UserService
             {
                 this._user.next(user);
             }),
+            catchError((error: HttpErrorResponse) => {
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('expireDate');
+                localStorage.removeItem('refreshToken');
+                localStorage.removeItem('role');
+                localStorage.removeItem('tenantId');
+                localStorage.removeItem('userId');
+                
+                this._user.next(null);
+                return throwError(error);
+            })
         );
     }
 

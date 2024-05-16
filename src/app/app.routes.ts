@@ -3,6 +3,7 @@ import { initialDataResolver } from 'app/app.resolvers';
 import { AuthGuard } from 'app/core/auth/guards/auth.guard';
 import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
+import { ProfileComponent } from './modules/admin/profile/profile.component';
 
 // @formatter:off
 /* eslint-disable max-len */
@@ -84,6 +85,9 @@ export const appRoutes: Route[] = [
 
             {path: 'function', loadChildren: () => import('app/modules/admin/function/function.routes')},
             {path: 'permission', loadChildren: () => import('app/modules/admin/permission/permission.routes')},
+
+            {path: 'my-profile', component: ProfileComponent},
+
 
         ]
     }

@@ -11,7 +11,7 @@ import { AppService } from 'app/services/app.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
-  selector: 'app-edit-app',
+  selector: 'app-edit-app-admin',
   standalone: true,
   imports        : [MatButtonModule, MatIconModule, NgIf, NgFor, MatDividerModule,
                     FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatFormFieldModule,
