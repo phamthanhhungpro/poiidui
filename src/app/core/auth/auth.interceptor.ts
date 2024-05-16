@@ -1,6 +1,7 @@
 import { HttpErrorResponse, HttpEvent, HttpHandlerFn, HttpRequest } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { AuthService } from 'app/core/auth/auth.service';
 import { AuthUtils } from 'app/core/auth/auth.utils';
 import { catchError, Observable, throwError } from 'rxjs';
@@ -14,6 +15,8 @@ import { catchError, Observable, throwError } from 'rxjs';
 export const authInterceptor = (req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
     const authService = inject(AuthService);
     const snackbar = inject(MatSnackBar);
+    const router = inject(Router);
+
 
     // Clone the request object
     let newReq = req.clone();
@@ -43,20 +46,23 @@ export const authInterceptor = (req: HttpRequest<unknown>, next: HttpHandlerFn):
                 // Sign out
                 authService.signOut();
 
-                // Reload the app
-                // location.reload();
+                const currentRoute = router.url;
+                if (!currentRoute.includes('sign-in')) {
+                    // Reload the app
+                    location.reload();
+                }
             }
 
             // Catch "403" responses
             if (error instanceof HttpErrorResponse && error.status === 403) {
                 // Sign out
-                snackbar.open("Bạn không có quyền thực hiện hành động này!", "Đóng", {duration: 2000});
+                snackbar.open("Bạn không có quyền thực hiện hành động này!", "Đóng", { duration: 2000 });
             }
 
             return throwError(error);
         }),
     );
-    
+
 };
 
 // openSnackBar(message: string, action: string) {
