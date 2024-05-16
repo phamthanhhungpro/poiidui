@@ -222,7 +222,7 @@ export class UserComponent {
   }
 
   addToOwner(user) {
-    this._userService.update(user.id, { roleCode: Constants.ROLE_ADMIN, isActive: user.isActive }).subscribe(
+    this._userService.update(user.id, { roleCode: Constants.ROLE_OWNER, isActive: user.isActive }).subscribe(
       (res) => {
         this.openSnackBar('Thao tác thành công', 'Đóng');
         this.getUsers();
