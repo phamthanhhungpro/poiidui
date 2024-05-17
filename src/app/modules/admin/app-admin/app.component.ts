@@ -15,6 +15,7 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { AppService } from 'app/services/app.service';
+import { AddUserToAppComponent } from './add-user-to-app/add-user-to-app.component';
 
 @Component({
   selector: 'app-app',
@@ -44,7 +45,7 @@ import { AppService } from 'app/services/app.service';
   imports: [MatIconModule, RouterLink, MatButtonModule, CdkScrollable, NgIf,
     AsyncPipe, NgForOf, CurrencyPipe, MatButtonModule, MatMenuModule,
     FuseDrawerComponent, MatDividerModule, MatSidenavModule, NewAppComponent,
-    EditAppComponent],
+    EditAppComponent, AddUserToAppComponent],
 })
 export class AppComponent {
 
@@ -52,9 +53,10 @@ export class AppComponent {
   @ViewChild('paginator') paginator: MatPaginator;
   
   apps$;
-  drawerComponent: 'new-app' | 'edit-app';
+  drawerComponent: 'new-app' | 'edit-app' | 'add-user-to-app';
   configForm: UntypedFormGroup;
   selectedData: any;
+  addUserType : 'add-appadmin' | 'add-member';
   pageSize = 10; // Initial page size
   pageNumber = 0; // Initial page index
   totalItems = 0; // Total items
@@ -109,7 +111,6 @@ export class AppComponent {
   }
 
   editApp(app: any) {
-    console.log(app);
     this.drawerComponent = 'edit-app';
     this.addDrawer.open();
 
@@ -156,5 +157,20 @@ export class AppComponent {
     this.pageNumber = event.pageIndex;
     this.pageSize = event.pageSize;
     this.getApps();
+  }
+
+  addAppAdmin(app) {
+    this.drawerComponent = 'add-user-to-app';
+    this.addDrawer.open();
+    this.selectedData = app;
+    this.addUserType = 'add-appadmin';
+  }
+
+  addMember(app) {
+    this.drawerComponent = 'add-user-to-app';
+    this.addDrawer.open();
+    this.selectedData = app;
+    this.addUserType = 'add-member'
+
   }
 }

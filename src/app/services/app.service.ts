@@ -25,8 +25,8 @@ export class AppService {
   getByUser(): Observable<App[]> {
     return this.http.get<App[]>(`${baseUrl}/byUser?userId=${localStorage.getItem('userId')}`);
   }
-  get(id: any): Observable<App> {
-    return this.http.get<App>(`${baseUrl}/${id}`);
+  get(id: any): Observable<any> {
+    return this.http.get<any>(`${baseUrl}/${id}`);
   }
 
   create(data: any): Observable<any> {
@@ -39,5 +39,9 @@ export class AppService {
 
   delete(id: any): Observable<any> {
     return this.http.delete(`${baseUrl}/${id}`);
+  }
+
+  updateAppUser(id: any, data: any): Observable<any> {
+    return this.http.put(`${baseUrl}/appUser/${id}`, data);
   }
 }

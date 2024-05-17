@@ -1,136 +1,78 @@
 <div class="flex flex-col w-full min-w-0 sm:absolute sm:inset-0 sm:overflow-hidden">
-    <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
-        <mat-tab label="THÔNG TIN CƠ BẢN">
-            <div
-                class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 bg-default dark:bg-transparent">
-                <div class="flex-1 min-w-0">
-                    <!-- Title -->
-                    <div class="mt-2">
-                        <h4 class="text-2xl md:text-3xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
-                            Thông tin cơ bản của người dùng
-                        </h4>
-                    </div>
-                </div>
-                <!-- Actions -->
-                <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
-                    <button mat-flat-button [color]="'primary'" (click)="save()">
-                        <mat-icon class="icon-size-4" [svgIcon]="'mat_outline:save'"></mat-icon>
-                        <span class="ml-2">Lưu</span>
+
+    <mat-drawer-container class="flex-auto sm:h-full">
+
+        <!-- Drawer -->
+        <mat-drawer class="sm:w-96 dark:bg-gray-900" [autoFocus]="false" [mode]="drawerMode" [opened]="drawerOpened"
+            #drawer>
+            <!-- Header -->
+            <div class="flex items-center justify-between m-8 mr-6 sm:my-10">
+                <!-- Title -->
+                <div class="text-2xl font-extrabold tracking-tight leading-none">Tài khoản của tôi</div>
+                <!-- Close button -->
+                <div class="lg:hidden">
+                    <button mat-icon-button (click)="drawer.close()">
+                        <mat-icon [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
                     </button>
                 </div>
             </div>
-
-            <div class="flex flex-col sm:flex-row sm:items-start overflow-y-auto p-1 h-180 min-h-180 max-h-180"
-                cdkScrollable>
-                <form [formGroup]="profileForm" class="w-full">
-                    <div class="flex flex-wrap">
-                        <!-- First Column -->
-                        <div class="w-full sm:w-1/2 p-2">
-                            <div class="flex">
-                                <mat-form-field class="flex-auto w-full">
-                                    <mat-label class="font-medium">Họ và tên đệm</mat-label>
-                                    <input matInput placeholder="Họ và tên đệm" formControlName="surName">
-                                </mat-form-field>
+            <!-- Panel links -->
+            <div class="flex flex-col divide-y border-t border-b">
+                <ng-container *ngFor="let panel of panels; trackBy: trackByFn">
+                    <div class="flex px-8 py-5 cursor-pointer" [ngClass]="{'hover:bg-gray-100 dark:hover:bg-hover': !selectedPanel || selectedPanel !== panel.id,
+                                    'bg-primary-50 dark:bg-hover': selectedPanel && selectedPanel === panel.id}"
+                        (click)="goToPanel(panel)">
+                        <mat-icon
+                            [ngClass]="{'text-hint': !selectedPanel || selectedPanel !== panel.id,
+                                        'text-primary dark:text-primary-500': selectedPanel && selectedPanel === panel.id}"
+                            [svgIcon]="panel.icon"></mat-icon>
+                        <div class="ml-3">
+                            <div class="font-medium leading-6"
+                                [ngClass]="{'text-primary dark:text-primary-500': selectedPanel && selectedPanel === panel.id}">
+                                {{panel.name}}
                             </div>
-                            <div class="flex">
-                                <mat-form-field class="flex-auto w-full">
-                                    <mat-label class="font-medium">Tên</mat-label>
-                                    <input matInput placeholder="Tên" formControlName="name">
-                                </mat-form-field>
-                            </div>
-                            <div class="flex">
-                                <mat-form-field class="flex-auto w-full">
-                                    <mat-label>Địa chỉ Email</mat-label>
-                                    <input matInput placeholder="Địa chỉ email" formControlName="email" readonly>
-                                </mat-form-field>
-                            </div>
-                            <div class="flex">
-                                <mat-form-field class="flex-auto w-full">
-                                    <mat-label>Tên người dùng</mat-label>
-                                    <input matInput placeholder="Tên người dùng" formControlName="userName" readonly>
-                                </mat-form-field>
-                            </div>
-                        </div>
-                        <!-- Second Column -->
-                        <div class="w-full sm:w-1/2 p-2">
-                            <div class="flex">
-                                <mat-form-field class="flex-auto w-full">
-                                    <mat-label>Số điện thoại</mat-label>
-                                    <input matInput placeholder="Số điện thoại" formControlName="phone">
-                                </mat-form-field>
-                            </div>
-                            <div class="flex">
-                                <mat-form-field class="flex-auto w-full">
-                                    <mat-label>Cơ quan</mat-label>
-                                    <input matInput placeholder="Cơ quan" formControlName="tenantName" readonly>
-                                </mat-form-field>
-                            </div>
-                            <div class="flex">
-                                <mat-form-field class="flex-auto w-full">
-                                    <mat-label>Vai trò</mat-label>
-                                    <input matInput placeholder="Vai trò" formControlName="roleName" readonly>
-                                </mat-form-field>
-                            </div>
-                            <div class="mb-4">
-                                <p class="font-medium">Ảnh đại diện</p>
-                                <div class="custom-image mt-2 mb-2">
-                                    <img *ngIf="selectedFile" [src]="selectedFileURL" alt="Selected Image">
-                                </div>
-                                <div>
-                                    <input type="file" (change)="onFileSelected($event)">
-                                </div>
+                            <div class="mt-0.5 text-secondary">
+                                {{panel.description}}
                             </div>
                         </div>
                     </div>
-                </form>
+                </ng-container>
             </div>
+        </mat-drawer>
 
-        </mat-tab>
-        <mat-tab label="BẢO MẬT">
-            <div
-                class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 bg-default dark:bg-transparent">
-                <div class="flex-1 min-w-0">
-                    <!-- Title -->
-                    <div class="mt-2">
-                        <h4 class="text-2xl md:text-3xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
-                            Thay đổi mật khẩu
-                        </h4>
-                    </div>
-                </div>
-                <!-- Actions -->
-                <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
-                    <button mat-flat-button [color]="'primary'" (click)="save()">
-                        <mat-icon class="icon-size-4" [svgIcon]="'mat_outline:save'"></mat-icon>
-                        <span class="ml-2">Lưu</span>
+        <!-- Drawer content -->
+        <mat-drawer-content class="flex flex-col">
+
+            <!-- Main -->
+            <div class="flex-auto px-6 pt-9 pb-12 md:p-8 md:pb-12 lg:p-12">
+
+                <!-- Panel header -->
+                <div class="flex items-center">
+                    <!-- Drawer toggle -->
+                    <button class="lg:hidden -ml-2" mat-icon-button (click)="drawer.toggle()">
+                        <mat-icon [svgIcon]="'heroicons_outline:bars-3'"></mat-icon>
                     </button>
                 </div>
+
+                <!-- Load settings panel -->
+                <div class="mt-2">
+                    <ng-container [ngSwitch]="selectedPanel">
+                        <ng-container *ngSwitchCase="'account'">
+                            <app-profile-info [data]="currentUser" (onClosed)="getCurrentUser()"></app-profile-info>
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'security'">
+                            <app-change-password></app-change-password>
+                        </ng-container>
+
+                    </ng-container>
+                    
+                </div>
+
             </div>
 
-            <div class="flex flex-col sm:flex-row sm:items-start overflow-y-auto p-1 h-180 min-h-180 max-h-180"
-                cdkScrollable>
-                <form [formGroup]="changePassForm" class="w-full">
-                    <div class="flex flex-wrap">
-                        <!-- First Column -->
-                        <div class="w-full sm:w-1/2 p-2">
-                            <div class="flex">
-                                <mat-form-field class="flex-auto w-full">
-                                    <mat-label class="font-medium">Nhập mật khẩu mới</mat-label>
-                                    <input matInput placeholder="Mật khẩu cần dài hơn 8 ký tự, bao gồm chữ hoa, thường và kí tự đặc biệt" formControlName="newPass">
-                                </mat-form-field>
-                            </div>
-                        </div>
-                        <!-- Second Column -->
-                        <div class="w-full sm:w-1/2 p-2">
-                            <div class="flex">
-                                <mat-form-field class="flex-auto w-full">
-                                    <mat-label>Nhập lại mật khẩu mới</mat-label>
-                                    <input matInput placeholder="Mật khẩu cần dài hơn 8 ký tự, bao gồm chữ hoa, thường và kí tự đặc biệt" formControlName="reNewPass">
-                                </mat-form-field>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </mat-tab>
-    </mat-tab-group>
+        </mat-drawer-content>
+
+    </mat-drawer-container>
+
 </div>

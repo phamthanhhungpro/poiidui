@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
 import { AsyncPipe, CommonModule, NgClass, NgFor, NgForOf, NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { MatTabsModule } from '@angular/material/tabs';
 import { AssignPermissionComponent } from '../permission/assign-permission/assign-permission.component';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
@@ -15,12 +15,17 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { RouterLink } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
+import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
+import { RoleService } from 'app/services/role.service';
+import { ProfileInfoComponent } from './profile-info/profile-info.component';
+import { ChangePasswordComponent } from './change-password/change-password.component';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [RouterLink, MatButtonModule, MatIconModule, NgIf, NgFor, MatDividerModule,
-    FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule,CdkScrollable, MatTabsModule],
+  imports: [MatSidenavModule, MatButtonModule, MatIconModule, NgForOf, NgClass, NgSwitch, NgSwitchCase, AsyncPipe,
+    NgIf, AssignPermissionComponent, MatTabsModule, ProfileInfoComponent, ChangePasswordComponent],
   templateUrl: './profile.component.html'
 })
 export class ProfileComponent {
@@ -29,59 +34,107 @@ export class ProfileComponent {
     tenantId: localStorage.getItem('tenantId'),
     userId: localStorage.getItem('userId')
   };
-
-  profileForm: UntypedFormGroup;
-  changePassForm: UntypedFormGroup;
+  @ViewChild('drawer') drawer: MatDrawer;
+  drawerMode: 'over' | 'side' = 'side';
+  drawerOpened: boolean = true;
+  panels: any;
+  selectedPanel;
+  private _unsubscribeAll: Subject<any> = new Subject<any>();
+  currentUser: any;
   /**
    *
    */
-  constructor(private _formBuilder: UntypedFormBuilder,
+  constructor(private _changeDetectorRef: ChangeDetectorRef,
+    private _fuseMediaWatcherService: FuseMediaWatcherService,
     private _userService: UserApiService) {
-    this.profileForm = this._formBuilder.group({
-      surName: ['', Validators.required],
-      name: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      userName: ['', Validators.required],
-      phone: [''],
-      tenantName: ['', Validators.required],
-      roleName: ['', Validators.required],
-    });
-
-    this.changePassForm = this._formBuilder.group({
-      newPass: ['', Validators.required],
-      reNewPass: ['', Validators.required]
-    });
 
   }
-  selectedFile: File | null = null;
-  selectedFileURL: string | ArrayBuffer | null = null;
-  avatarUrl: any = "";
+  /**
+   * On init
+   */
+  ngOnInit(): void {
+    this.getCurrentUser();
+    this.panels = [
+      {
+        id: 'account',
+        icon: 'heroicons_outline:user-circle',
+        name: 'Thông tin cá nhân',
+        description: 'Xem và thay đổi thông tin cá nhân của bạn',
+      },
+      {
+        id: 'security',
+        icon: 'heroicons_outline:lock-closed',
+        name: 'Bảo mật',
+        description: 'Thay đổi mật khẩu',
+      },
+    ];
+    // Subscribe to media changes
+    this._fuseMediaWatcherService.onMediaChange$
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(({ matchingAliases }) => {
+        // Set the drawerMode and drawerOpened
+        if (matchingAliases.includes('lg')) {
+          this.drawerMode = 'side';
+          this.drawerOpened = true;
+        }
+        else {
+          this.drawerMode = 'over';
+          this.drawerOpened = false;
+        }
 
-  onFileSelected(event: any) {
-    this.selectedFile = event.target.files[0];
-
-    // Display the selected image preview
-    const reader = new FileReader();
-    reader.onload = (e: any) => {
-      this.selectedFileURL = e.target.result;
-    };
-    reader.readAsDataURL(this.selectedFile);
-    this.uploadImage();
+        // Mark for check
+        this._changeDetectorRef.markForCheck();
+      });
   }
 
-  uploadImage() {
-    if (this.selectedFile) {
-      this._userService.uploadAvatar(this.selectedFile)
-        .subscribe(res => {
-          // Handle response, e.g., update user profile with new avatar URL
-          this.avatarUrl = res.avatarUrl;
-        }, error => {
-          console.error("Failed to upload avatar:", error);
-        });
+  /**
+   * On destroy
+   */
+  ngOnDestroy(): void {
+    // Unsubscribe from all subscriptions
+    this._unsubscribeAll.next(null);
+    this._unsubscribeAll.complete();
+  }
+
+  // -----------------------------------------------------------------------------------------------------
+  // @ Public methods
+  // -----------------------------------------------------------------------------------------------------
+
+  /**
+   * Navigate to the panel
+   *
+   * @param panel
+   */
+  goToPanel(panel): void {
+    this.selectedPanel = panel.id;
+    // Close the drawer on 'over' mode
+    if (this.drawerMode === 'over') {
+      this.drawer.close();
     }
   }
 
-  save() {
+  /**
+   * Get the details of the panel
+   *
+   * @param id
+   */
+  getPanelInfo(id: string): any {
+    return this.panels.find(panel => panel.id === id);
+  }
 
+  /**
+   * Track by function for ngFor loops
+   *
+   * @param index
+   * @param item
+   */
+  trackByFn(index: number, item: any): any {
+    return item.id || index;
+  }
+
+  getCurrentUser() {
+    this._userService.get(this.userInfo.userId).subscribe(res => {
+      this.currentUser = res;
+    })
   }
 }

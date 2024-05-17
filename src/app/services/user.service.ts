@@ -70,4 +70,12 @@ export class UserApiService {
 
     return this.http.get<User[]>(`${baseUrl}/can-be-manager?${queryString}`);
   }
+
+  getListAppAdmin(): Observable<any[]> {
+    return this.http.get<any[]>(`${baseUrl}/appadmin`);
+  }
+
+  getListMember(): Observable<any[]> {
+    return this.http.get<any[]>(`${baseUrl}/member`);
+  }
 }
