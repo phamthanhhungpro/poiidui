@@ -51,7 +51,8 @@
                             class="z-10 flex items-center px-6 py-4 md:px-8 cursor-pointer border-b hover:bg-gray-100 dark:hover:bg-hover">
                             <div class="flex flex-0 items-center justify-center w-10 h-10 rounded-full overflow-hidden">
                                 <ng-container *ngIf="user.avatar">
-                                    <img class="object-cover w-full h-full" [src]="domain + user.avatar" alt="user avatar" />
+                                    <img class="object-cover w-full h-full" [src]="domain + user.avatar"
+                                        alt="user avatar" />
                                 </ng-container>
                                 <ng-container *ngIf="!user.avatar && user.name">
                                     <div
@@ -81,8 +82,7 @@
                                     <mat-icon class="icon-size-4" [svgIcon]="'heroicons_solid:pencil'"></mat-icon>
                                 </button>
                                 <button mat-icon-button (click)="inActive(user)">
-                                    <mat-icon class="icon-size-4"
-                                        [svgIcon]="'heroicons_outline:x-circle'"></mat-icon>
+                                    <mat-icon class="icon-size-4" [svgIcon]="'heroicons_outline:x-circle'"></mat-icon>
                                 </button>
                                 <button mat-icon-button [matMenuTriggerFor]="menu">
                                     <mat-icon class="icon-size-4" [svgIcon]="'mat_solid:more_vert'"></mat-icon>
@@ -116,6 +116,11 @@
                                         <mat-icon class="icon-size-4"
                                             [svgIcon]="'mat_outline:manage_accounts'"></mat-icon>
                                         <span>Chọn làm quản lý cấp cao</span>
+                                    </button>
+                                    <button (click)="resetPass(user)" mat-menu-item *ngIf="isAllowSetRole()">
+                                        <mat-icon class="icon-size-4"
+                                            [svgIcon]="'mat_outline:manage_accounts'"></mat-icon>
+                                        <span>Thiết lập lại mật khẩu</span>
                                     </button>
                                 </mat-menu>
                             </div>
@@ -154,6 +159,11 @@
         <!-- add manager -->
         <ng-container *ngIf="drawerComponent === 'add-manager'">
             <app-add-manager [drawer]="addDrawer" [data]="selectedData" (onClosed)="getUsers()"></app-add-manager>
+        </ng-container>
+
+        <!-- reset pwd -->
+        <ng-container *ngIf="drawerComponent === 'reset-pwd'">
+            <app-reset-pwd [drawer]="addDrawer" [data]="selectedData" (onClosed)="getUsers()"></app-reset-pwd>
         </ng-container>
     </div>
 </fuse-drawer>

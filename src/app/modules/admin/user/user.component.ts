@@ -21,6 +21,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { AddManagerComponent } from './add-manager/add-manager.component';
 import { Constants } from 'app/mock-api/common/constants';
 import { environment } from 'environments/environment';
+import { ResetPwdComponent } from './reset-pwd/reset-pwd.component';
 
 @Component({
   selector: 'app-user',
@@ -30,7 +31,7 @@ import { environment } from 'environments/environment';
   imports: [MatIconModule, RouterLink, MatButtonModule, CdkScrollable, NgIf,
     AsyncPipe, NgForOf, CurrencyPipe, MatButtonModule, MatMenuModule,
     FuseDrawerComponent, MatDividerModule, MatSidenavModule, NewUserComponent,
-    EditUserComponent, MatPaginatorModule, AddManagerComponent],
+    EditUserComponent, MatPaginatorModule, AddManagerComponent, ResetPwdComponent],
 })
 export class UserComponent {
 
@@ -40,7 +41,7 @@ export class UserComponent {
 
   public users$;
   domain = environment.idApiUrlWithOutEndding;
-  drawerComponent: 'new-user' | 'edit-user' | 'add-manager';
+  drawerComponent: 'new-user' | 'edit-user' | 'add-manager' | 'reset-pwd';
   configForm: UntypedFormGroup;
   selectedData: any;
   pageSize = 25; // Initial page size
@@ -234,5 +235,12 @@ export class UserComponent {
         this.openSnackBar('Có lỗi xảy ra khi thực hiện thao tác', 'Đóng');
       }
     );
+  }
+
+  resetPass(user) {
+    this.drawerComponent = 'reset-pwd';
+    this.selectedData = user;
+
+    this.addDrawer.open();
   }
 }

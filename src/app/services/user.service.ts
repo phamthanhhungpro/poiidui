@@ -60,4 +60,14 @@ export class UserApiService {
 
     return this.http.get<User[]>(`${baseUrl}/username?${queryString}`);
   }
+
+  resetPwd(data: any): Observable<any> {
+    return this.http.post(`${authUrl}/resetPassword`, data);
+  }
+
+  getListCanbeManager(query): Observable<any[]> {
+    const queryString = objectToQueryString(query);
+
+    return this.http.get<User[]>(`${baseUrl}/can-be-manager?${queryString}`);
+  }
 }

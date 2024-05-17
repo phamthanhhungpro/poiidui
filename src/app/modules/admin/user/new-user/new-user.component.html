@@ -48,7 +48,27 @@
                 <div class="flex">
                     <mat-form-field class="flex-auto">
                         <mat-label>Mật khẩu</mat-label>
-                        <input matInput [placeholder]="'Mật khẩu'" [formControlName]="'passWord'">
+                        <input
+                        [placeholder]="'Mật khẩu'"
+                        id="password"
+                        matInput
+                        type="password"
+                        [formControlName]="'passWord'"
+                        #passwordField>
+                    <button
+                        mat-icon-button
+                        type="button"
+                        (click)="passwordField.type === 'password' ? passwordField.type = 'text' : passwordField.type = 'password'"
+                        matSuffix>
+                        <mat-icon
+                            class="icon-size-5"
+                            *ngIf="passwordField.type === 'password'"
+                            [svgIcon]="'heroicons_solid:eye'"></mat-icon>
+                        <mat-icon
+                            class="icon-size-5"
+                            *ngIf="passwordField.type === 'text'"
+                            [svgIcon]="'heroicons_solid:eye-slash'"></mat-icon>
+                    </button>
                     </mat-form-field>
                 </div>
                 <div class="flex">
