@@ -38,6 +38,18 @@ export const authInterceptor = (req: HttpRequest<unknown>, next: HttpHandlerFn):
         });
     }
 
+    if (authService.accessToken && AuthUtils.isTokenExpired(authService.accessToken)) {
+        authService.signOut();
+
+        const currentRoute = router.url;
+        if (!currentRoute.includes('sign-in')) {
+            // Reload the app
+            location.reload();
+        }
+
+        return;
+    }
+
     // Response
     return next(newReq).pipe(
         catchError((error) => {
