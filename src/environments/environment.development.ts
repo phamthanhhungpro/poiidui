@@ -6,5 +6,5 @@ export const environment = {
     production: false,
     apiUrl: apiUrl,
     idApiUrl: apiUrl + 'id/api/',
-    idApiUrlWithOutEndding: apiUrl + 'id/api'
+    idApiUrlWithOutEndding: apiUrl + 'id'
 };
