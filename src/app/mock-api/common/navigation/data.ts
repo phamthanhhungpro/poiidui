@@ -125,6 +125,68 @@ export const defaultNavigation: FuseNavigationItem[] = [
 
         ]
     },
+    {
+        id: 'categories',
+        title: 'Danh mục',
+        type: 'group',
+        icon: 'heroicons_outline:home',
+        children: [
+            {
+                id: 'dantoc',
+                title: 'Dân tộc',
+                type: 'basic',
+                link: '/categories/dan-toc',
+                hidden(item) {
+                    return false;
+                },
+            },
+            {
+                id: 'tongiao',
+                title: 'Tôn giáo',
+                type: 'basic',
+                link: '/categories/ton-giao',
+                hidden(item) {
+                    return false;
+                },
+            },
+
+        ]
+    },
+    {
+        id: 'settings',
+        title: 'Cài đặt',
+        type: 'group',
+        icon: 'heroicons_outline:home',
+        children: [
+            {
+                id: 'don-vi',
+                title: 'Thông tin Cơ quan - Đơn vị',
+                type: 'basic',
+                link: '/settings/don-vi',
+                hidden(item) {
+                    return false;
+                },
+            },
+            {
+                id: 'chi-nhanh',
+                title: 'Chi nhánh/Văn phòng',
+                type: 'basic',
+                link: '/settings/chi-nhanh',
+                hidden(item) {
+                    return false;
+                },
+            },
+            {
+                id: 'phong-ban-bo-phan',
+                title: 'Phòng/Ban/Bộ phận',
+                type: 'basic',
+                link: '/settings/phong-ban-bo-phan',
+                hidden(item) {
+                    return false;
+                },
+            },
+        ]
+    }
 ];
 export const compactNavigation: FuseNavigationItem[] = [
     {
@@ -160,6 +222,27 @@ export const futuristicNavigation: FuseNavigationItem[] = [
 
         ]
     },
+    {
+        id: 'categories',
+        title: 'Danh mục',
+        type: 'group',
+        icon: 'heroicons_outline:home',
+        children: []
+    },
+    {
+        id: 'settings',
+        title: 'Cài đặt',
+        type: 'group',
+        icon: 'heroicons_outline:home',
+        children: [
+        ],
+        hidden(item) {
+            if (!isAllowSetPermission(localStorage.getItem('role'))) {
+                return true;
+            }
+            return false;
+        },
+    }
 ];
 
 export const firstNavigation: FuseNavigationItem[] = [

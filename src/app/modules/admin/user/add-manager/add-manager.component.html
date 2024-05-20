@@ -32,7 +32,7 @@
                     <mat-chip-grid class="w-auto" #chipGrid aria-label="Managers selection">
                         @for (manager of listManager; track manager) {
                         <mat-chip-row (removed)="remove(manager)">
-                            {{manager.userName}}
+                            {{manager.surName}} {{manager.name}}
                             <button matChipRemove [attr.aria-label]="'remove ' + manager.userName">
                                 <mat-icon>cancel</mat-icon>
                             </button>

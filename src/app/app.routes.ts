@@ -4,6 +4,10 @@ import { AuthGuard } from 'app/core/auth/guards/auth.guard';
 import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
 import { ProfileComponent } from './modules/admin/profile/profile.component';
+import { DantocComponent } from './modules/admin/categories/dantoc/dantoc.component';
+import { DonViComponent } from './modules/admin/settings/don-vi/don-vi.component';
+import { ChiNhanhComponent } from './modules/admin/settings/chi-nhanh/chi-nhanh.component';
+import { PhongBanBoPhanComponent } from './modules/admin/settings/phong-ban-bo-phan/phong-ban-bo-phan.component';
 
 // @formatter:off
 /* eslint-disable max-len */
@@ -87,6 +91,13 @@ export const appRoutes: Route[] = [
             {path: 'permission', loadChildren: () => import('app/modules/admin/permission/permission.routes')},
 
             {path: 'my-profile', component: ProfileComponent},
+
+            {path: 'categories/dan-toc', component: DantocComponent},
+            {path: 'categories/ton-giao', component: DantocComponent},
+
+            {path: 'settings/don-vi', component: DonViComponent},
+            {path: 'settings/chi-nhanh', component: ChiNhanhComponent},
+            {path: 'settings/phong-ban-bo-phan', component: PhongBanBoPhanComponent},
 
 
         ]
