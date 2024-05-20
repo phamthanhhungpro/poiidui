@@ -198,7 +198,9 @@ export class EditUserComponent {
   save() {
     var selectedApps = this.appCheckbox.subtasks.filter(t => t.completed).map(t => t.value);
     this.editUserForm.value.appIds = selectedApps;
-    this.editUserForm.value.avatar = this.avatarUrl;
+    //this.editUserForm.value.avatar = this.avatarUrl;
+
+    // current keep the avatar of user; handle it later
 
     this._userService.update(this.data.id, this.editUserForm.value).subscribe(
       (res) => {

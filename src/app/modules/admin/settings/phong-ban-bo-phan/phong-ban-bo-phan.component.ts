@@ -14,6 +14,13 @@ import { map } from 'rxjs';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { RoleService } from 'app/services/role.service';
+import { CreateDonviComponent } from '../don-vi/create-donvi/create-donvi.component';
+import { EditDonviComponent } from '../don-vi/edit-donvi/edit-donvi.component';
+import { CoquandonviService } from 'app/services/coquandonvi.service';
+import { PhongBanBoPhanService } from 'app/services/phongbanbophan.service';
+import { CreatePhongbanComponent } from './create-phongban/create-phongban.component';
+import { EditPhongbanComponent } from './edit-phongban/edit-phongban.component';
+import { environment } from 'environments/environment';
 
 @Component({
   selector: 'app-phong-ban-bo-phan',
@@ -33,42 +40,42 @@ import { RoleService } from 'app/services/role.service';
             }
 
             @screen lg {
-                grid-template-columns: 20px 150px 60px 100px 100px auto 96px;
+                grid-template-columns: 20px 180px 100px 150px auto 96px;
             }
         }
     `,
   ],
   imports: [MatIconModule, RouterLink, MatButtonModule, CdkScrollable, NgIf,
     AsyncPipe, NgForOf, CurrencyPipe, MatButtonModule, MatMenuModule,
-    FuseDrawerComponent, MatDividerModule, MatSidenavModule, NewRoleComponent,
-    EditRoleComponent],
+    FuseDrawerComponent, MatDividerModule, MatSidenavModule, CreatePhongbanComponent,
+    EditPhongbanComponent],
   templateUrl: './phong-ban-bo-phan.component.html'
 })
 export class PhongBanBoPhanComponent {
   @ViewChild('addDrawer', { static: false }) addDrawer: FuseDrawerComponent;
+  domain = environment.idApiUrlWithOutEndding;
 
-  public roles$;
+  public data$;
   selectedData: any;
 
-  drawerComponent: 'new-role' | 'edit-role';
+  drawerComponent: 'new-data' | 'edit-data';
   configForm: UntypedFormGroup;
-  pageSize = 10; // Initial page size
-  pageNumber = 0; // Initial page index
-  totalItems = 0; // Total items
+
   /**
    * Constructor
    */
   constructor(private _fuseConfirmationService: FuseConfirmationService,
     private _formBuilder: UntypedFormBuilder,
-    private _roleService: RoleService
-  ) {
+    private _phongbanbophanService: PhongBanBoPhanService
+  ) 
+  {
   }
 
   ngOnInit(): void {
     // Build the config form
     this.configForm = this._formBuilder.group({
-      title: 'Xóa vai trò',
-      message: 'Xóa vai trò này khỏi hệ thống? <span class="font-medium">Thao tác này không thể hoàn tác!</span>',
+      title: 'Xóa dữ liệu',
+      message: 'Xóa dữ liệu này khỏi hệ thống? <span class="font-medium">Thao tác này không thể hoàn tác!</span>',
       icon: this._formBuilder.group({
         show: true,
         name: 'heroicons_outline:exclamation-triangle',
@@ -88,11 +95,11 @@ export class PhongBanBoPhanComponent {
       dismissible: true,
     });
 
-    this.getRoles();
+    this.getTableData();
   }
 
-  addRole() {
-    this.drawerComponent = 'new-role';
+  addData() {
+    this.drawerComponent = 'new-data';
     this.addDrawer.open();
   }
 
@@ -100,20 +107,20 @@ export class PhongBanBoPhanComponent {
     this.addDrawer.close();
   }
 
-  editRole(role: any) {
+  editData(role: any) {
     this.selectedData = role;
-    this.drawerComponent = 'edit-role';
+    this.drawerComponent = 'edit-data';
     this.addDrawer.open();
   }
 
-  deleteRole(role: any) {
+  delData(role: any) {
     const dialogRef = this._fuseConfirmationService.open(this.configForm.value);
 
     // Subscribe to afterClosed from the dialog reference
     dialogRef.afterClosed().subscribe((result) => {
       if (result === 'confirmed') {
-        this._roleService.delete(role.id).subscribe(() => {
-          this.getRoles();
+        this._phongbanbophanService.delete(role.id).subscribe(() => {
+          this.getTableData();
         });
       }
     });
@@ -121,19 +128,14 @@ export class PhongBanBoPhanComponent {
 
 
   // get data from api
-  getRoles() {
-    const query = {
-      pageNumber: this.pageNumber + 1,
-      pageSize: this.pageSize
-    };
-    this.roles$ = this._roleService.getAll(query).pipe(
+  getTableData() {
+    this.data$ = this._phongbanbophanService.getAllNoPaging().pipe(
       map((data: any) => {
-        const roles: any[] = data.items.map((role, index: number) => ({
-          ...role,
+        const items: any[] = data.map((item, index: number) => ({
+          ...item,
           stt: index + 1
         }));
-        this.totalItems = data.count;
-        return { roles };
+        return { items };
       })
     );
   }

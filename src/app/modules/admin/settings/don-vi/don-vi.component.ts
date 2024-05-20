@@ -8,12 +8,12 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterLink } from '@angular/router';
 import { FuseDrawerComponent } from '@fuse/components/drawer';
-import { EditRoleComponent } from '../../role/edit-role/edit-role.component';
-import { NewRoleComponent } from '../../role/new-role/new-role.component';
 import { map } from 'rxjs';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
-import { RoleService } from 'app/services/role.service';
+import { CoquandonviService } from 'app/services/coquandonvi.service';
+import { CreateDonviComponent } from './create-donvi/create-donvi.component';
+import { EditDonviComponent } from './edit-donvi/edit-donvi.component';
 
 @Component({
   selector: 'app-don-vi',
@@ -40,35 +40,34 @@ import { RoleService } from 'app/services/role.service';
   ],
   imports: [MatIconModule, RouterLink, MatButtonModule, CdkScrollable, NgIf,
     AsyncPipe, NgForOf, CurrencyPipe, MatButtonModule, MatMenuModule,
-    FuseDrawerComponent, MatDividerModule, MatSidenavModule, NewRoleComponent,
-    EditRoleComponent],
+    FuseDrawerComponent, MatDividerModule, MatSidenavModule, CreateDonviComponent,
+    EditDonviComponent],
   templateUrl: './don-vi.component.html'
 })
 export class DonViComponent {
   @ViewChild('addDrawer', { static: false }) addDrawer: FuseDrawerComponent;
 
-  public roles$;
+  public data$;
   selectedData: any;
 
-  drawerComponent: 'new-role' | 'edit-role';
+  drawerComponent: 'new-data' | 'edit-data';
   configForm: UntypedFormGroup;
-  pageSize = 10; // Initial page size
-  pageNumber = 0; // Initial page index
-  totalItems = 0; // Total items
+
   /**
    * Constructor
    */
   constructor(private _fuseConfirmationService: FuseConfirmationService,
     private _formBuilder: UntypedFormBuilder,
-    private _roleService: RoleService
-  ) {
+    private _coquandonviService: CoquandonviService
+  ) 
+  {
   }
 
   ngOnInit(): void {
     // Build the config form
     this.configForm = this._formBuilder.group({
-      title: 'Xóa vai trò',
-      message: 'Xóa vai trò này khỏi hệ thống? <span class="font-medium">Thao tác này không thể hoàn tác!</span>',
+      title: 'Xóa dữ liệu',
+      message: 'Xóa dữ liệu này khỏi hệ thống? <span class="font-medium">Thao tác này không thể hoàn tác!</span>',
       icon: this._formBuilder.group({
         show: true,
         name: 'heroicons_outline:exclamation-triangle',
@@ -88,11 +87,11 @@ export class DonViComponent {
       dismissible: true,
     });
 
-    this.getRoles();
+    this.getTableData();
   }
 
-  addRole() {
-    this.drawerComponent = 'new-role';
+  addData() {
+    this.drawerComponent = 'new-data';
     this.addDrawer.open();
   }
 
@@ -100,20 +99,20 @@ export class DonViComponent {
     this.addDrawer.close();
   }
 
-  editRole(role: any) {
+  editData(role: any) {
     this.selectedData = role;
-    this.drawerComponent = 'edit-role';
+    this.drawerComponent = 'edit-data';
     this.addDrawer.open();
   }
 
-  deleteRole(role: any) {
+  delData(role: any) {
     const dialogRef = this._fuseConfirmationService.open(this.configForm.value);
 
     // Subscribe to afterClosed from the dialog reference
     dialogRef.afterClosed().subscribe((result) => {
       if (result === 'confirmed') {
-        this._roleService.delete(role.id).subscribe(() => {
-          this.getRoles();
+        this._coquandonviService.delete(role.id).subscribe(() => {
+          this.getTableData();
         });
       }
     });
@@ -121,19 +120,14 @@ export class DonViComponent {
 
 
   // get data from api
-  getRoles() {
-    const query = {
-      pageNumber: this.pageNumber + 1,
-      pageSize: this.pageSize
-    };
-    this.roles$ = this._roleService.getAll(query).pipe(
+  getTableData() {
+    this.data$ = this._coquandonviService.getAllNoPaging().pipe(
       map((data: any) => {
-        const roles: any[] = data.items.map((role, index: number) => ({
-          ...role,
+        const items: any[] = data.map((item, index: number) => ({
+          ...item,
           stt: index + 1
         }));
-        this.totalItems = data.count;
-        return { roles };
+        return { items };
       })
     );
   }

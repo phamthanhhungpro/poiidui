@@ -78,4 +78,8 @@ export class UserApiService {
   getListMember(): Observable<any[]> {
     return this.http.get<any[]>(`${baseUrl}/member`);
   }
+
+  getListAdmin(): Observable<any[]> {
+    return this.http.get<any[]>(`${baseUrl}/admin`);
+  }
 }

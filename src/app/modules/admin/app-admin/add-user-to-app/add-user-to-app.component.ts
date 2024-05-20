@@ -57,7 +57,6 @@ export class AddUserToAppComponent {
     this.addManagerForm.patchValue(this.data);
   }
 
-  // get user by id 
   getAppById() {
     this._appService.get(this.data.id).subscribe(res => {
       if(this.type === 'add-appadmin') {
@@ -68,6 +67,7 @@ export class AddUserToAppComponent {
       this.addManagerForm.get('searchManager')!.setValue(null);
     })
   }
+
   save() {
       // get list id from listManager
       const listIds = this.listManager.map(manager => manager.id);
@@ -156,8 +156,6 @@ export class AddUserToAppComponent {
   }
 
   private _filter(value: any): any[] {
-    console.log('filter', value);
-
     if (typeof (value) === 'object') {
       let res = this.allManagers.filter(item => (item.fullName.toLowerCase().includes(value.fullName.toLowerCase())
         || item.userName.toLowerCase().includes(value.userName.toLowerCase())));
