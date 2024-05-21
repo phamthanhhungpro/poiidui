@@ -251,7 +251,9 @@ export const firstNavigation: FuseNavigationItem[] = [
         title: 'Hệ thống thông tin nhân sự',
         type: 'basic',
         icon: 'mat_outline:psychology',
-        link: 'https://poihrmui.vercel.app/'
+        link: 'https://poihrmui.vercel.app/',
+        externalLink: true,
+        target: "_blank"
     },
     {
         id: 'prj',
