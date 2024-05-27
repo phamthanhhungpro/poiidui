@@ -92,8 +92,21 @@ export class AuthSignInComponent implements OnInit
                     // routing file and we don't have to touch here.
                     const redirectURL = this._activatedRoute.snapshot.queryParamMap.get('redirectURL') || '/signed-in-redirect';
 
+                    if(redirectURL.startsWith('http') || redirectURL.startsWith('https')){
+                        // Get the access token,tenantId, role, userId, expireDate  from local storage
+                        const accessToken = localStorage.getItem('accessToken');
+                        const tenantId = localStorage.getItem('tenantId');
+                        const role = localStorage.getItem('role');
+                        const userId = localStorage.getItem('userId');
+                        const expireDate = localStorage.getItem('expireDate');
+
+                        // Pass the access token,tenantId, role, userId, expireDate to the external site
+                        window.location.href = `${redirectURL}?accessToken=${accessToken}&tenantId=${tenantId}&role=${role}&userId=${userId}&expireDate=${expireDate}`;
+                        
+                    } else {
                     // Navigate to the redirect url
                     this._router.navigateByUrl(redirectURL);
+                    }
 
                 },
                 (response) =>
