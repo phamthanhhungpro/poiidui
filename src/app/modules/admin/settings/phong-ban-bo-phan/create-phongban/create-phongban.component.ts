@@ -53,7 +53,7 @@ export class CreatePhongbanComponent {
       phone: [''],
       description: [''],
       searchManager: [''],
-      parentId: ['']
+      parentId: [null]
     });
   }
 

@@ -122,6 +122,10 @@
                                                     [svgIcon]="'heroicons_solid:trash'"></mat-icon>
                                                 <span>Xóa</span>
                                             </button>
+                                            <button (click)="addMember(model)" mat-menu-item>
+                                                <mat-icon class="icon-size-4" [svgIcon]="'mat_outline:manage_accounts'"></mat-icon>
+                                                <span>Quản lý thành viên</span>
+                                            </button>
 
                                         </mat-menu>
                                     </div>
@@ -155,6 +159,10 @@
             <app-edit-phongban [drawer]="addDrawer" [data]="selectedData"
                 (onClosed)="getTableData()"></app-edit-phongban>
         </ng-container>
-
+        <!-- add user to phong ban -->
+        <ng-container *ngIf="drawerComponent === 'add-user'">
+            <app-add-user-to-phongban [drawer]="addDrawer" [data]="selectedData"
+                (onClosed)="getTableData()"></app-add-user-to-phongban>
+        </ng-container>
     </div>
 </fuse-drawer>

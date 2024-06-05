@@ -82,4 +82,8 @@ export class UserApiService {
   getListAdmin(): Observable<any[]> {
     return this.http.get<any[]>(`${baseUrl}/admin`);
   }
+
+  getUserInTenant(): Observable<any[]> {
+    return this.http.get<any[]>(`${baseUrl}/all-in-tenant`);
+  }
 }

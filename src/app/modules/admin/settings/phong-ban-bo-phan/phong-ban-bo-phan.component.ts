@@ -8,19 +8,14 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterLink } from '@angular/router';
 import { FuseDrawerComponent } from '@fuse/components/drawer';
-import { EditRoleComponent } from '../../role/edit-role/edit-role.component';
-import { NewRoleComponent } from '../../role/new-role/new-role.component';
 import { map } from 'rxjs';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
-import { RoleService } from 'app/services/role.service';
-import { CreateDonviComponent } from '../don-vi/create-donvi/create-donvi.component';
-import { EditDonviComponent } from '../don-vi/edit-donvi/edit-donvi.component';
-import { CoquandonviService } from 'app/services/coquandonvi.service';
 import { PhongBanBoPhanService } from 'app/services/phongbanbophan.service';
 import { CreatePhongbanComponent } from './create-phongban/create-phongban.component';
 import { EditPhongbanComponent } from './edit-phongban/edit-phongban.component';
 import { environment } from 'environments/environment';
+import { AddUserToPhongBanComponent } from './add-user-to-phongban/add-user-to-phongban.component';
 
 @Component({
   selector: 'app-phong-ban-bo-phan',
@@ -48,7 +43,7 @@ import { environment } from 'environments/environment';
   imports: [MatIconModule, RouterLink, MatButtonModule, CdkScrollable, NgIf,
     AsyncPipe, NgForOf, CurrencyPipe, MatButtonModule, MatMenuModule,
     FuseDrawerComponent, MatDividerModule, MatSidenavModule, CreatePhongbanComponent,
-    EditPhongbanComponent],
+    EditPhongbanComponent, AddUserToPhongBanComponent],
   templateUrl: './phong-ban-bo-phan.component.html'
 })
 export class PhongBanBoPhanComponent {
@@ -58,7 +53,7 @@ export class PhongBanBoPhanComponent {
   public data$;
   selectedData: any;
 
-  drawerComponent: 'new-data' | 'edit-data';
+  drawerComponent: 'new-data' | 'edit-data' | 'add-user';
   configForm: UntypedFormGroup;
 
   /**
@@ -145,5 +140,11 @@ export class PhongBanBoPhanComponent {
     if (!isOpened) {
       this.drawerComponent = null;
     }
+  }
+
+  addMember(model) {
+    this.selectedData = model;
+    this.drawerComponent = 'add-user';
+    this.addDrawer.open();
   }
 }

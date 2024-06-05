@@ -36,4 +36,8 @@ export class PhongBanBoPhanService {
   delete(id: any): Observable<any> {
     return this.http.delete(`${baseUrl}/${id}`);
   }
+
+  updatePhongBanUser(id: any, data: any): Observable<any> {
+    return this.http.put(`${baseUrl}/member/${id}`, data);
+  }
 }
