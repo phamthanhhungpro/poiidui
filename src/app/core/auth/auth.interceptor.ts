@@ -20,7 +20,6 @@ export const authInterceptor = (req: HttpRequest<unknown>, next: HttpHandlerFn):
 
     // Clone the request object
     let newReq = req.clone();
-
     // Request
     //
     // If the access token didn't expire, add the Authorization header.
@@ -36,6 +35,7 @@ export const authInterceptor = (req: HttpRequest<unknown>, next: HttpHandlerFn):
                 .set('UserId', localStorage.getItem('userId'))
                 .set('role', localStorage.getItem('role')),
         });
+
     }
 
     if (authService.accessToken && AuthUtils.isTokenExpired(authService.accessToken)) {
@@ -53,6 +53,8 @@ export const authInterceptor = (req: HttpRequest<unknown>, next: HttpHandlerFn):
     // Response
     return next(newReq).pipe(
         catchError((error) => {
+            console.log('newReq', newReq);
+
             // Catch "401 Unauthorized" responses
             if (error instanceof HttpErrorResponse && error.status === 401) {
                 // Sign out

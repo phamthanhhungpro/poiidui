@@ -95,7 +95,7 @@ export class AuthService {
                 const headers = new HttpHeaders({
                     'Authorization': `Bearer ${response.accessToken}`
                 });
-                
+                console.log(headers);
                 // Make a GET request to the /manage/info endpoint with the access token in the headers
                 return this._httpClient.get(`${authUrl}/manage/info`, { headers: headers }).pipe(
                     switchMap((userInfo: any) => {
