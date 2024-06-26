@@ -10,7 +10,7 @@
             <button mat-flat-button [color]="'primary'" (click)="save()">
                 Lưu
             </button>
-            <button class="px-6 ml-3" mat-button (click)="cancelAdd()">
+            <button class="px-6 ml-3" mat-button (click)="cancelAdd()"  [disabled]="addDataForm.invalid">
                 Hủy
             </button>
         </div>

@@ -51,8 +51,6 @@ export class ResetPwdComponent {
     
   }
   ngOnInit() {
-    console.log(this.data);
-
     this.changePwdForm.patchValue(this.data);
   }
 
