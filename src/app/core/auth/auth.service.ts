@@ -176,6 +176,8 @@ export class AuthService {
         // Set the authenticated flag to false
         this._authenticated = false;
 
+        localStorage.setItem('logout-event', 'logout' + Math.random());
+
         // Return the observable
         return of(true);
     }
