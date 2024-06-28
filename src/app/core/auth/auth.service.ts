@@ -176,8 +176,9 @@ export class AuthService {
         // Set the authenticated flag to false
         this._authenticated = false;
 
-        localStorage.setItem('logout-event', 'logout' + Math.random());
-
+    // Send message to app2 to clear its localStorage
+        window.postMessage({ type: 'LOGOUT' }, environment.hrmFrontEndUrl);
+        window.postMessage({ type: 'LOGOUT' }, environment.prjFrontEndUrl);
         // Return the observable
         return of(true);
     }
