@@ -177,8 +177,8 @@ export class AuthService {
         this._authenticated = false;
 
     // Send message to app2 to clear its localStorage
-        window.postMessage({ type: 'LOGOUT' }, environment.hrmFrontEndUrl);
-        window.postMessage({ type: 'LOGOUT' }, environment.prjFrontEndUrl);
+        window.postMessage({ type: 'LOGOUT' }, environment.idApiUrl);
+        // window.postMessage({ type: 'LOGOUT' }, environment.prjFrontEndUrl);
         // Return the observable
         return of(true);
     }

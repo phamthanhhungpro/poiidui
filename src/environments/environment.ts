@@ -1,6 +1,8 @@
 const apiUrl = 'http://113.160.187.187:1118/';
 const hrmFrontEndUrl = 'https://poihrmui.vercel.app';
 const prjFrontEndUrl = 'https://poiprjui.vercel.app';
+const idFrontEndUrl = 'https://poiidui.vercel.app';
+
 
 export const environment = {
     production: true,
@@ -9,4 +11,5 @@ export const environment = {
     idApiUrlWithOutEndding: apiUrl + 'id',
     hrmFrontEndUrl: hrmFrontEndUrl,
     prjFrontEndUrl: prjFrontEndUrl,
+    idFrontEndUrl: idFrontEndUrl,
 };
