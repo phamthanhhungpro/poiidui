@@ -8,7 +8,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
         id: 'id',
         title: 'ID Management',
         type: 'group',
-        icon: 'heroicons_outline:home',
+        icon: 'mat_outline:arrow_drop_down',
         children: [
             {
                 id: 'tenant',
@@ -93,7 +93,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
         id: 'permission',
         title: 'Phân quyền người dùng',
         type: 'group',
-        icon: 'heroicons_outline:home',
+        icon: 'mat_outline:arrow_drop_down',
         children: [
             {
                 id: 'function',
@@ -129,7 +129,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
         id: 'categories',
         title: 'Danh mục',
         type: 'group',
-        icon: 'heroicons_outline:home',
+        icon: 'mat_outline:arrow_drop_down',
         children: [
             {
                 id: 'dantoc',
@@ -156,7 +156,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
         id: 'settings',
         title: 'Cài đặt',
         type: 'group',
-        icon: 'heroicons_outline:home',
+        icon: 'mat_outline:arrow_drop_down',
         children: [
             {
                 id: 'don-vi',
@@ -202,7 +202,7 @@ export const futuristicNavigation: FuseNavigationItem[] = [
         id: 'id',
         title: 'ID Management',
         type: 'group',
-        icon: 'heroicons_outline:home',
+        icon: 'mat_outline:arrow_drop_down',
         children: [
 
         ]
@@ -211,7 +211,7 @@ export const futuristicNavigation: FuseNavigationItem[] = [
         id: 'permission',
         title: 'Phân quyền người dùng',
         type: 'group',
-        icon: 'heroicons_outline:home',
+        icon: 'mat_outline:arrow_drop_down',
         hidden(item) {
             if (!isAllowSetPermission(localStorage.getItem('role'))) {
                 return true;
@@ -226,14 +226,14 @@ export const futuristicNavigation: FuseNavigationItem[] = [
         id: 'categories',
         title: 'Danh mục',
         type: 'group',
-        icon: 'heroicons_outline:home',
+        icon: 'mat_outline:arrow_drop_down',
         children: []
     },
     {
         id: 'settings',
         title: 'Cài đặt',
         type: 'group',
-        icon: 'heroicons_outline:home',
+        icon: 'mat_outline:arrow_drop_down',
         children: [
         ],
         hidden(item) {

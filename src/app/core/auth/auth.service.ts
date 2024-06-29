@@ -34,7 +34,9 @@ export class AuthService {
 
     setExpireDate(expiresIn: number) {
         const currentDate = new Date();
-        const expireDate = new Date(currentDate.getTime() + expiresIn * 1000); // Convert seconds to milliseconds
+        // next date
+
+        const expireDate = new Date(currentDate.getTime() + expiresIn * 1000 + 24 * 60 * 60 * 1000); // Convert seconds to milliseconds
         localStorage.setItem('expireDate', expireDate.toISOString());
     }
 
