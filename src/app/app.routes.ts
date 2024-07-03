@@ -8,6 +8,7 @@ import { DantocComponent } from './modules/admin/categories/dantoc/dantoc.compon
 import { DonViComponent } from './modules/admin/settings/don-vi/don-vi.component';
 import { ChiNhanhComponent } from './modules/admin/settings/chi-nhanh/chi-nhanh.component';
 import { PhongBanBoPhanComponent } from './modules/admin/settings/phong-ban-bo-phan/phong-ban-bo-phan.component';
+import { FeedbackComponent } from './modules/admin/feedback/feedback.component';
 
 // @formatter:off
 /* eslint-disable max-len */
@@ -99,6 +100,7 @@ export const appRoutes: Route[] = [
             {path: 'settings/chi-nhanh', component: ChiNhanhComponent},
             {path: 'settings/phong-ban-bo-phan', component: PhongBanBoPhanComponent},
 
+            {path: 'feedback', component: FeedbackComponent},
 
         ]
     }
