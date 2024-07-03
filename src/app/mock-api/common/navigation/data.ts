@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { FuseNavigationItem } from '@fuse/components/navigation';
 import { Constants } from '../constants';
-import { isAllowSetPermission } from '../user/roleHelper';
+import { isAllowSetPermission, isSsaRole } from '../user/roleHelper';
 
 export const defaultNavigation: FuseNavigationItem[] = [
     {
@@ -186,6 +186,29 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 },
             },
         ]
+    },
+    {
+        id: 'feedback',
+        title: 'Ý kiến phản hồi',
+        type: 'group',
+        icon: 'mat_outline:arrow_drop_down',
+        children: [
+            {
+                id: 'feedback-list',
+                title: 'Danh sách feedback',
+                type: 'basic',
+                link: '/feedback-list',
+                hidden(item) {
+                    return false;
+                },
+            },
+        ],
+        hidden(item) {
+            if (!isSsaRole(localStorage.getItem('role'))) {
+                return true;
+            }
+            return false;
+        },
     }
 ];
 export const compactNavigation: FuseNavigationItem[] = [
@@ -238,6 +261,20 @@ export const futuristicNavigation: FuseNavigationItem[] = [
         ],
         hidden(item) {
             if (!isAllowSetPermission(localStorage.getItem('role'))) {
+                return true;
+            }
+            return false;
+        },
+    },
+    {
+        id: 'feedback',
+        title: 'Ý kiến phản hồi',
+        type: 'group',
+        icon: 'mat_outline:arrow_drop_down',
+        children: [
+        ],
+        hidden(item) {
+            if (!isSsaRole(localStorage.getItem('role'))) {
                 return true;
             }
             return false;

@@ -1,0 +1,22 @@
+<div class="w-full mx-auto mt-10 p-10 bg-white rounded-lg shadow-md">
+    <div *ngIf="feedback">
+      <h1 class="text-2xl font-bold mb-4">{{ feedback.tittle }}</h1>
+      <p class="mb-4"><strong>Mô tả:</strong> {{ feedback.moTa }}</p>
+      <p class="mb-4"><strong>Ứng dụng:</strong> {{ feedback.appName }}</p>
+      <div class="mb-4">
+        <strong>Tệp đính kèm:</strong>
+        <div *ngIf="screenshotUrls && screenshotUrls.length > 0">
+          <div *ngFor="let url of screenshotUrls" class="mt-2">
+            <img [src]="url" alt="Screenshot" class="w-[800px] h-[480px] object-cover border border-gray-300 rounded-md">
+          </div>
+        </div>
+        <div *ngIf="!screenshotUrls || screenshotUrls.length === 0">
+          <p>No screenshots available.</p>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="!feedback" class="text-center">
+      <p>Loading...</p>
+    </div>
+  </div>
+  
