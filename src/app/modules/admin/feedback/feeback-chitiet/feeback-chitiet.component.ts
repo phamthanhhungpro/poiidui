@@ -22,7 +22,7 @@ export class FeebackChitietComponent {
     if (id) {
       this._feedbackService.get(id).subscribe((res) => {
         this.feedback = res;
-        this.screenshotUrls = this.feedback.attachments.split(',').map((item: string) => {
+        this.screenshotUrls = this.feedback.attachments?.split(',').map((item: string) => {
           return `${environment.idApiUrlWithOutEndding}/${item}`;
         });
       });
