@@ -7,10 +7,10 @@
 
         <div class="flex items-center">
             <!-- More menu -->
-            <button mat-flat-button [color]="'primary'" (click)="save()">
+            <button mat-flat-button [color]="'primary'" (click)="save()" [disabled]="addDataForm.invalid">
                 Lưu
             </button>
-            <button class="px-6 ml-3" mat-button (click)="cancelAdd()"  [disabled]="addDataForm.invalid">
+            <button class="px-6 ml-3" mat-button (click)="cancelAdd()">
                 Hủy
             </button>
         </div>
