@@ -28,7 +28,7 @@ export class AuthUtils
         // Get the expiration date
         var dateString = localStorage.getItem('expireDate') ?? '';
         const date = new Date(dateString);
-        offsetSeconds = offsetSeconds || 0;
+        offsetSeconds = offsetSeconds || 60;
 
         if ( date === null )
         {

@@ -175,10 +175,6 @@ export class AuthService {
         // Set the authenticated flag to false
         this._authenticated = false;
 
-        // Send message to app2 to clear its localStorage
-        window.postMessage({ type: 'LOGOUT' }, environment.idFrontEndUrl);
-
-        console.log('event sented');
         // Return the observable
         return of(true);
     }
