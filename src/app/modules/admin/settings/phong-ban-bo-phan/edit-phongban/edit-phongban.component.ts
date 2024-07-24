@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,45 +8,68 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatDrawer } from '@angular/material/sidenav';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { CoquandonviService } from 'app/services/coquandonvi.service';
 import { PhongBanBoPhanService } from 'app/services/phongbanbophan.service';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
+import { map, startWith } from 'rxjs';
+import { UserApiService } from 'app/services/user.service';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-edit-phongban',
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, NgIf, NgFor, MatDividerModule,
+  imports: [CommonModule, MatButtonModule, MatIconModule, NgIf, NgFor, MatDividerModule,
     FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatFormFieldModule,
-  ],  templateUrl: './edit-phongban.component.html'
+    MatAutocompleteModule,
+    MatChipsModule, MatSelectModule
+  ],
+  templateUrl: './edit-phongban.component.html'
 })
 export class EditPhongbanComponent {
   @Input() drawer: MatDrawer;
+  @Input() data: any;
   @Output() onClosed = new EventEmitter<any>();
-  @Input() data: any = {};
 
-  editDataForm: UntypedFormGroup;
+  addDataForm: UntypedFormGroup;
+  @ViewChild('managerInput') managerInput: ElementRef<HTMLInputElement>;
+  listManager = [];
+  filteredOptions: any;
+  allManagers: any;
 
+  listBoPhan: any;
   /**
    *
    */
   constructor(private _formBuilder: UntypedFormBuilder,
     private _phongbanbophanService: PhongBanBoPhanService,
     private _snackBar: MatSnackBar,
+    private _userService: UserApiService,
+    private _changeDetectorRef: ChangeDetectorRef
   ) {
-    this.editDataForm = this._formBuilder.group({
+    this.addDataForm = this._formBuilder.group({
       name: ['', Validators.required],
       address: [''],
       email: [''],
       phone: [''],
-      description: ['']
+      description: [''],
+      searchManager: [''],
+      parentId: [null]
     });
   }
 
   ngOnInit(): void {
-    this.editDataForm.patchValue(this.data);
+    console.log(this.data);
+    this.getListCanBeAdmin();
+    this.getListBoPhan();
+    this.addDataForm.patchValue(this.data);
+    this.listManager = this.data.quanLy;
+    this.addDataForm.get('parentId')!.setValue(this.data.parent?.id);
   }
 
   // clear form when close drawer
   clearForm(): void {
-    this.editDataForm.reset();
+    this.addDataForm.reset();
   }
 
   // close drawer and reset form
@@ -57,7 +80,9 @@ export class EditPhongbanComponent {
 
   // save data
   save(): void {
-    this._phongbanbophanService.update(this.data.id, this.editDataForm.value).subscribe(res => {
+    const listIds = this.listManager.map(manager => manager.id);
+    this.addDataForm.value.managerIds = listIds;
+    this._phongbanbophanService.update(this.data.id, this.addDataForm.value).subscribe(res => {
       if (res.isSucceeded) {
         this.openSnackBar('Thao tác thành công', 'Đóng');
         this.onClosed.emit();
@@ -72,5 +97,65 @@ export class EditPhongbanComponent {
   // snackbar
   openSnackBar(message: string, action: string) {
     this._snackBar.open(message, action, { duration: 2000 });
+  }
+
+  getListCanBeAdmin() {
+    this._userService.getListAdmin().subscribe(res => {
+      this.allManagers = res;
+      this.filteredOptions = this.addDataForm.get('searchManager')?.valueChanges.pipe(
+        startWith(null),
+        map((item: any | null) => (item ? this._filter(item) : this.allManagers.slice())),
+        map(managers => managers.filter(m => !this.listManager.some(i => i.userName === m.userName)))
+      );
+    }
+    );
+  }
+
+  private _filter(value: any): any[] {
+    if (typeof (value) === 'object') {
+      let res = this.allManagers.filter(item => (item.fullName.toLowerCase().includes(value.fullName.toLowerCase())
+        || item.userName.toLowerCase().includes(value.userName.toLowerCase())));
+
+      return res;
+    }
+
+    if (value && value.startsWith('@')) {
+      // delete @
+      value = value.slice(1);
+    }
+
+    const filterValue = value.toLowerCase();
+
+    return this.allManagers.filter(item => (item.fullName.toLowerCase().includes(filterValue)
+      || item.userName.toLowerCase().includes(filterValue)));
+  }
+
+  add(event: MatChipInputEvent): void {
+    // do nothing
+    // don't allow to add by keyboard
+  }
+
+  remove(item: any): void {
+    const index = this.listManager.indexOf(item);
+
+    if (index >= 0) {
+      this.listManager.splice(index, 1);
+      this._changeDetectorRef.markForCheck();
+      this.addDataForm.get('searchManager')!.setValue(null);
+    }
+  }
+
+  selected(event: MatAutocompleteSelectedEvent): void {
+    let selectedUser = event.option.value;
+    this.listManager.push(selectedUser);
+
+    this.managerInput.nativeElement.value = '';
+    this.addDataForm.get('searchManager')!.setValue(null);
+  }
+
+  getListBoPhan(): void {
+    this._phongbanbophanService.getAllNoPaging().subscribe(res => {
+      this.listBoPhan = res;
+    });
   }
 }
