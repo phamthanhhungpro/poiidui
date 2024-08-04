@@ -1,7 +1,7 @@
-const apiUrl = 'https://api.poi.vn:1118/';
-const hrmFrontEndUrl = 'https://hrm.poi.vn';
-const prjFrontEndUrl = 'https://prj.poi.vn';
-const idFrontEndUrl = 'https://id.poi.vn/';
+const apiUrl = 'http://poi.vn:1118/';
+const hrmFrontEndUrl = 'http://poi.vn:1124';
+const prjFrontEndUrl = 'http://poi.vn:1123';
+const idFrontEndUrl = 'http://poi.vn:1122';
 
 
 export const environment = {
