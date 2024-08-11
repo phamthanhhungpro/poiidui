@@ -65,6 +65,10 @@ export class UserApiService {
     return this.http.post(`${authUrl}/resetPassword`, data);
   }
 
+  changePwd(data: any): Observable<any> {
+    return this.http.post(`${authUrl}/change-password`, data);
+  }
+
   getListCanbeManager(query): Observable<any[]> {
     const queryString = objectToQueryString(query);
 
