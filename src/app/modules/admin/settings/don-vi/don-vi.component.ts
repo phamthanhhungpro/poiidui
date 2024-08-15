@@ -1,141 +1,63 @@
-import { Component, ViewChild } from '@angular/core';
-import { AsyncPipe, CommonModule, CurrencyPipe, NgForOf, NgIf } from '@angular/common';
-import { CdkScrollable } from '@angular/cdk/scrolling';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { TextFieldModule } from '@angular/cdk/text-field';
+import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDividerModule } from '@angular/material/divider';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { RouterLink } from '@angular/router';
-import { FuseDrawerComponent } from '@fuse/components/drawer';
-import { map } from 'rxjs';
-import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
-import { FuseConfirmationService } from '@fuse/services/confirmation';
-import { CoquandonviService } from 'app/services/coquandonvi.service';
-import { CreateDonviComponent } from './create-donvi/create-donvi.component';
-import { EditDonviComponent } from './edit-donvi/edit-donvi.component';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { TenantService } from 'app/services/tenant.service';
 
 @Component({
   selector: 'app-don-vi',
   standalone: true,
-  styles: [
-    /* language=SCSS */
-    `
-        .donvi-grid {
-            grid-template-columns: auto 112px;
-
-            @screen sm {
-                grid-template-columns:  auto 112px 96px;
-            }
-
-            @screen md {
-                grid-template-columns: 48px 150px 80px auto 96px;
-            }
-
-            @screen lg {
-                grid-template-columns: 20px 150px 60px 100px 100px auto 96px;
-            }
-        }
-    `,
-  ],
-  imports: [MatIconModule, RouterLink, MatButtonModule, CdkScrollable, NgIf,
-    AsyncPipe, NgForOf, CurrencyPipe, MatButtonModule, MatMenuModule,
-    FuseDrawerComponent, MatDividerModule, MatSidenavModule, CreateDonviComponent,
-    EditDonviComponent],
-  templateUrl: './don-vi.component.html'
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatIconModule, MatInputModule, TextFieldModule, MatSelectModule, MatOptionModule, MatButtonModule],
+  templateUrl: './don-vi.component.html',
 })
 export class DonViComponent {
-  @ViewChild('addDrawer', { static: false }) addDrawer: FuseDrawerComponent;
+  accountForm: UntypedFormGroup;
+  @Output() onClosed = new EventEmitter<any>();
+  @Input() data: any = {};
 
-  public data$;
-  selectedData: any;
-
-  drawerComponent: 'new-data' | 'edit-data';
-  configForm: UntypedFormGroup;
-
+  tenantId = localStorage.getItem('tenantId');
   /**
    * Constructor
    */
-  constructor(private _fuseConfirmationService: FuseConfirmationService,
+  constructor(
     private _formBuilder: UntypedFormBuilder,
-    private _coquandonviService: CoquandonviService
-  ) 
-  {
+    private _snackBar: MatSnackBar,
+    private _tenantService: TenantService
+  ) {
+    // Create the form
+    this.accountForm = this._formBuilder.group({
+      name: [''],
+      description: [''],
+      code: [''],
+    });
   }
 
+  // -----------------------------------------------------------------------------------------------------
+  // @ Lifecycle hooks
+  // -----------------------------------------------------------------------------------------------------
+
+  /**
+   * On init
+   */
   ngOnInit(): void {
-    // Build the config form
-    this.configForm = this._formBuilder.group({
-      title: 'Xóa dữ liệu',
-      message: 'Xóa dữ liệu này khỏi hệ thống? <span class="font-medium">Thao tác này không thể hoàn tác!</span>',
-      icon: this._formBuilder.group({
-        show: true,
-        name: 'heroicons_outline:exclamation-triangle',
-        color: 'warn',
-      }),
-      actions: this._formBuilder.group({
-        confirm: this._formBuilder.group({
-          show: true,
-          label: 'Remove',
-          color: 'warn',
-        }),
-        cancel: this._formBuilder.group({
-          show: true,
-          label: 'Cancel',
-        }),
-      }),
-      dismissible: true,
+    this.getCoQuanInfo();
+
+  }
+
+  // snackbar
+  openSnackBar(message: string, action: string) {
+    this._snackBar.open(message, action, { duration: 2000 });
+  }
+
+  getCoQuanInfo() {
+    this._tenantService.get(this.tenantId).subscribe((res) => {
+      this.accountForm.patchValue(res);
     });
-
-    this.getTableData();
-  }
-
-  addData() {
-    this.drawerComponent = 'new-data';
-    this.addDrawer.open();
-  }
-
-  closeDrawer() {
-    this.addDrawer.close();
-  }
-
-  editData(role: any) {
-    this.selectedData = role;
-    this.drawerComponent = 'edit-data';
-    this.addDrawer.open();
-  }
-
-  delData(role: any) {
-    const dialogRef = this._fuseConfirmationService.open(this.configForm.value);
-
-    // Subscribe to afterClosed from the dialog reference
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'confirmed') {
-        this._coquandonviService.delete(role.id).subscribe(() => {
-          this.getTableData();
-        });
-      }
-    });
-  }
-
-
-  // get data from api
-  getTableData() {
-    this.data$ = this._coquandonviService.getAllNoPaging().pipe(
-      map((data: any) => {
-        const items: any[] = data.map((item, index: number) => ({
-          ...item,
-          stt: index + 1
-        }));
-        return { items };
-      })
-    );
-  }
-
-  // we need this function to distroy the child component when drawer is closed
-  drawerOpenedChanged(isOpened) {
-    if (!isOpened) {
-      this.drawerComponent = null;
-    }
   }
 }

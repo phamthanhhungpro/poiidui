@@ -162,8 +162,11 @@ export class AuthService {
      * Sign out
      */
     signOut(): Observable<any> {
-        this._tokenService.create({ token: this.accessToken }).subscribe((data) => {
-        });
+        if(this.accessToken) {
+            this._tokenService.create({ token: this.accessToken }).subscribe((data) => {
+            });
+        }
+
         // Remove the access token from the local storage
         localStorage.removeItem('accessToken');
         localStorage.removeItem('expireDate');

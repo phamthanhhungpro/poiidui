@@ -117,10 +117,11 @@ export class AuthSignInComponent implements OnInit
                     // Reset the form
                     this.signInNgForm.resetForm();
 
+                    console.log(response);
                     // Set the alert
                     this.alert = {
                         type   : 'error',
-                        message: 'Wrong username or password',
+                        message: `Đăng nhập không thành công. ${response.error.detail || ''}`,
                     };
 
                     // Show the alert
